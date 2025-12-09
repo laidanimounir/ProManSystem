@@ -154,7 +154,13 @@ namespace ProManSystem
             CATTCTextBox.Text = _selectedCustomer.CA_TTC?.ToString();
         }
 
-        
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var home = new HomeWindow();  
+            home.Show();
+            this.Close();                 
+        }
+
         private void UpdateCustomerButton_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedCustomer == null)
