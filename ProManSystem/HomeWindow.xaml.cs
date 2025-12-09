@@ -14,7 +14,7 @@ namespace ProManSystem
         {
             var win = new CustomerMenuWindow();   
             win.Show();
-            this.Close();
+            this.Close();                
         }
     }
 }
