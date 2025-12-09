@@ -1,20 +1,21 @@
-﻿using System;
+﻿using ProManSystem.Data;
+using ProManSystem.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
-using ProManSystem.Data;
-using ProManSystem.Models;
+using System.Windows.Controls;
 
-namespace ProManSystem
+namespace ProManSystem.Views
 {
-    public partial class MainWindow : Window
+    public partial class CustomersEditorView : UserControl
     {
         private readonly AppDbContext _db = new AppDbContext();
         private ObservableCollection<Customer> _customers = new ObservableCollection<Customer>();
-        private Customer? _selectedCustomer;   
+        private Customer? _selectedCustomer;
 
-        public MainWindow()
+        public CustomersEditorView()
         {
             InitializeComponent();
             LoadCustomers();
@@ -48,7 +49,7 @@ namespace ProManSystem
             CAHTTextBox.Text = "";
             TVATextBox.Text = "";
             CATTCTextBox.Text = "";
-            _selectedCustomer = null;   
+            _selectedCustomer = null;
         }
 
         private string GenerateCustomerCode()
@@ -82,8 +83,10 @@ namespace ProManSystem
         {
             if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var value))
                 return value;
+
             if (decimal.TryParse(text, out value))
                 return value;
+
             return null;
         }
 
@@ -109,7 +112,7 @@ namespace ProManSystem
                 caTtc = caHt.Value + (caHt.Value * tva.Value / 100m);
             }
 
-            var typeId = (TypeIdComboBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString()
+            var typeId = (TypeIdComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString()
                          ?? TypeIdComboBox.Text;
 
             var customer = new Customer
@@ -135,11 +138,11 @@ namespace ProManSystem
             PrepareNewCustomer();
         }
 
-       
-        private void CustomersGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void CustomersGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _selectedCustomer = CustomersGrid.SelectedItem as Customer;
-            if (_selectedCustomer == null) return;
+            if (_selectedCustomer == null)
+                return;
 
             CodeClientTextBox.Text = _selectedCustomer.CodeClient;
             NomTextBox.Text = _selectedCustomer.NomComplet;
@@ -154,11 +157,10 @@ namespace ProManSystem
             CATTCTextBox.Text = _selectedCustomer.CA_TTC?.ToString();
         }
 
+        // زر الرجوع داخل UserControl لا يفعل شيئاً حالياً
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            var home = new HomeWindow();  
-            home.Show();
-            this.Close();                 
+            // يمكن لاحقاً رفع حدث إلى HomeWindow إن احتجت
         }
 
         private void UpdateCustomerButton_Click(object sender, RoutedEventArgs e)
@@ -182,7 +184,7 @@ namespace ProManSystem
             if (caHt.HasValue && tva.HasValue)
                 caTtc = caHt.Value + (caHt.Value * tva.Value / 100m);
 
-            var typeId = (TypeIdComboBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString()
+            var typeId = (TypeIdComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString()
                          ?? TypeIdComboBox.Text;
 
             _selectedCustomer.NomComplet = NomTextBox.Text;
@@ -196,11 +198,10 @@ namespace ProManSystem
             _selectedCustomer.TauxTVA = tva;
             _selectedCustomer.CA_TTC = caTtc;
 
-            _db.SaveChanges();              
-            CustomersGrid.Items.Refresh();   
+            _db.SaveChanges();
+            CustomersGrid.Items.Refresh();
         }
 
-        
         private void DeleteCustomerButton_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedCustomer == null)
@@ -219,7 +220,7 @@ namespace ProManSystem
                 return;
 
             _db.Customers.Remove(_selectedCustomer);
-            _db.SaveChanges();              
+            _db.SaveChanges();
             _customers.Remove(_selectedCustomer);
             _selectedCustomer = null;
 

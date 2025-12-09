@@ -1,8 +1,6 @@
-﻿<Window x:Class="ProManSystem.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Clients" Height="600" Width="900"
-        WindowStartupLocation="CenterScreen">
+﻿<UserControl x:Class="ProManSystem.Views.CustomersEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -10,11 +8,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-       
+        <!-- الفورم الخاص بالزبون -->
         <StackPanel Orientation="Vertical" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                 <Label Content="Code client:" Width="124"/>
-                <TextBox x:Name="CodeClientTextBox" Width="164" IsReadOnly="True" RenderTransformOrigin="1.197,0.56"/>
+                <TextBox x:Name="CodeClientTextBox" Width="164" IsReadOnly="True"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -62,28 +60,27 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,10,0,5">
-                <Button x:Name="BackButton" Content="← Retour" Width="80" Margin="0,0,10,0"
-            Click="BackButton_Click"/>
+                
                 <Button x:Name="NewCustomerButton" Content="Nouveau" Width="80" Margin="0,0,10,0"
-            Click="NewCustomerButton_Click"/>
+                        Click="NewCustomerButton_Click"/>
                 <Button x:Name="SaveCustomerButton" Content="Enregistrer" Width="100" Margin="0,0,10,0"
-            Click="SaveCustomerButton_Click"/>
+                        Click="SaveCustomerButton_Click"/>
                 <Button x:Name="UpdateCustomerButton" Content="Modifier" Width="80" Margin="0,0,10,0"
-            Click="UpdateCustomerButton_Click"/>
+                        Click="UpdateCustomerButton_Click"/>
                 <Button x:Name="DeleteCustomerButton" Content="Supprimer" Width="80"
-            Click="DeleteCustomerButton_Click"/>
+                        Click="DeleteCustomerButton_Click"/>
             </StackPanel>
         </StackPanel>
 
-
+        <!-- جدول الزبائن -->
         <DataGrid x:Name="CustomersGrid"
-          Grid.Row="1"
-          AutoGenerateColumns="False"
-          IsReadOnly="True"
-          CanUserAddRows="False"
-          SelectionMode="Single"
-          SelectionChanged="CustomersGrid_SelectionChanged"
-          Margin="0,10,0,0">
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  SelectionMode="Single"
+                  SelectionChanged="CustomersGrid_SelectionChanged"
+                  Margin="0,10,0,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Code" Binding="{Binding CodeClient}" Width="80"/>
                 <DataGridTextColumn Header="Nom" Binding="{Binding NomComplet}" Width="150"/>
@@ -98,7 +95,5 @@
                 <DataGridTextColumn Header="CA TTC" Binding="{Binding CA_TTC}" Width="80"/>
             </DataGrid.Columns>
         </DataGrid>
-
-
     </Grid>
-</Window>
+</UserControl>
