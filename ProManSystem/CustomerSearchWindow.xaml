@@ -1,0 +1,38 @@
+﻿<Window x:Class="ProManSystem.CustomerSearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Search customers" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- شريط البحث -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBox x:Name="SearchTextBox" Width="250" Margin="0,0,10,0"/>
+            <Button Content="Search" Width="80" Click="SearchButton_Click"/>
+            <Button Content="← Back" Width="80" Margin="10,0,0,0"
+                    Click="BackButton_Click"/>
+        </StackPanel>
+
+        <!-- نتائج البحث -->
+        <DataGrid x:Name="ResultsGrid"
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Code" Binding="{Binding CodeClient}" Width="80"/>
+                <DataGridTextColumn Header="Nom" Binding="{Binding NomComplet}" Width="150"/>
+                <DataGridTextColumn Header="Activité" Binding="{Binding Activite}" Width="100"/>
+                <DataGridTextColumn Header="Adresse" Binding="{Binding Adresse}" Width="200"/>
+                <DataGridTextColumn Header="N° RC" Binding="{Binding NumeroRC}" Width="120"/>
+                <DataGridTextColumn Header="Matricule fiscal" Binding="{Binding MatriculeFiscal}" Width="120"/>
+                <DataGridTextColumn Header="Type ID" Binding="{Binding TypeIdentification}" Width="80"/>
+                <DataGridTextColumn Header="N° ID" Binding="{Binding NumeroIdentification}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

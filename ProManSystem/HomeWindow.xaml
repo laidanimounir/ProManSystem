@@ -1,0 +1,15 @@
+﻿<Window x:Class="ProManSystem.HomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Menu principal" Height="367" Width="690"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="20">
+        <TextBlock Text="Gestion de l'atelier" 
+                   FontSize="20" FontWeight="Bold" 
+                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <Button Content="Clients" Height="40" Margin="0,0,0,10"
+                Click="ClientsButton_Click"/>
+        <Button Content="Produits" Height="40" Margin="0,0,0,10"/>
+        <Button Content="Fournisseurs" Height="40"/>
+    </StackPanel>
+</Window>
