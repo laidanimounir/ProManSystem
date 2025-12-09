@@ -1,0 +1,102 @@
+﻿<Window x:Class="ProManSystem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Clients" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+       
+        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Code client:" Width="124"/>
+                <TextBox x:Name="CodeClientTextBox" Width="164" IsReadOnly="True" RenderTransformOrigin="1.197,0.56"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Nom / Raison sociale:" Width="124"/>
+                <TextBox x:Name="NomTextBox" Width="277"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Activité:" Width="124"/>
+                <TextBox x:Name="ActiviteTextBox" Width="250"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Adresse:" Width="124"/>
+                <TextBox x:Name="AdresseTextBox" Width="400"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="N° RC:" Width="123"/>
+                <TextBox x:Name="RcTextBox" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Matricule fiscal:" Width="124"/>
+                <TextBox x:Name="MatriculeTextBox" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Type ident.:" Width="123"/>
+                <ComboBox x:Name="TypeIdComboBox" Width="150">
+                    <ComboBoxItem Content="Article"/>
+                    <ComboBoxItem Content="Autre"/>
+                </ComboBox>
+                <Label Content="N° ident.:" Margin="10,0,0,0"/>
+                <TextBox x:Name="NumeroIdTextBox" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="CA HT:" Width="124"/>
+                <TextBox x:Name="CAHTTextBox" Width="100"/>
+                <Label Content="TVA %:" Margin="10,0,0,0"/>
+                <TextBox x:Name="TVATextBox" Width="60"/>
+                <Label Content="CA TTC:" Margin="10,0,0,0"/>
+                <TextBox x:Name="CATTCTextBox" Width="100"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,5">
+                <Button x:Name="NewCustomerButton" Content="Nouveau" Width="80" Margin="0,0,10,0"
+            Click="NewCustomerButton_Click"/>
+                <Button x:Name="SaveCustomerButton" Content="Enregistrer" Width="100" Margin="0,0,10,0"
+            Click="SaveCustomerButton_Click"/>
+                <Button x:Name="UpdateCustomerButton" Content="Modifier" Width="80" Margin="0,0,10,0"
+            Click="UpdateCustomerButton_Click"/>
+                <Button x:Name="DeleteCustomerButton" Content="Supprimer" Width="80"
+            Click="DeleteCustomerButton_Click"/>
+            </StackPanel>
+        </StackPanel>
+
+
+        <DataGrid x:Name="CustomersGrid"
+          Grid.Row="1"
+          AutoGenerateColumns="False"
+          IsReadOnly="True"
+          CanUserAddRows="False"
+          SelectionMode="Single"
+          SelectionChanged="CustomersGrid_SelectionChanged"
+          Margin="0,10,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Code" Binding="{Binding CodeClient}" Width="80"/>
+                <DataGridTextColumn Header="Nom" Binding="{Binding NomComplet}" Width="150"/>
+                <DataGridTextColumn Header="Activité" Binding="{Binding Activite}" Width="100"/>
+                <DataGridTextColumn Header="Adresse" Binding="{Binding Adresse}" Width="200"/>
+                <DataGridTextColumn Header="N° RC" Binding="{Binding NumeroRC}" Width="120"/>
+                <DataGridTextColumn Header="Matricule fiscal" Binding="{Binding MatriculeFiscal}" Width="120"/>
+                <DataGridTextColumn Header="Type ID" Binding="{Binding TypeIdentification}" Width="80"/>
+                <DataGridTextColumn Header="N° ID" Binding="{Binding NumeroIdentification}" Width="120"/>
+                <DataGridTextColumn Header="CA HT" Binding="{Binding CA_HT}" Width="80"/>
+                <DataGridTextColumn Header="TVA" Binding="{Binding TauxTVA}" Width="60"/>
+                <DataGridTextColumn Header="CA TTC" Binding="{Binding CA_TTC}" Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+
+    </Grid>
+</Window>
