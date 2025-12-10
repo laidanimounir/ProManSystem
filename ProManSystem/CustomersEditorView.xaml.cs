@@ -2,7 +2,6 @@
 using ProManSystem.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +19,7 @@ namespace ProManSystem.Views
             InitializeComponent();
             LoadCustomers();
             PrepareNewCustomer();
+            ManageCustomersGrid.ItemsSource = _customers;
         }
 
         private void LoadCustomers()
@@ -32,7 +32,79 @@ namespace ProManSystem.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erreur lors du chargement des clients : " + ex.Message);
+                MessageBox.Show("Erreur lors du chargement des clients : " + ex.Message,
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            string term = SearchTextBox.Text?.Trim() ?? "";
+
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                CustomersGrid.ItemsSource = _customers;
+                return;
+            }
+
+            var results = _customers
+                .Where(c =>
+                    (!string.IsNullOrEmpty(c.CodeClient) && c.CodeClient.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.NomComplet) && c.NomComplet.Contains(term, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            CustomersGrid.ItemsSource = results;
+        }
+
+        private void ManageSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            string term = ManageSearchTextBox.Text?.Trim() ?? "";
+
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                ManageCustomersGrid.ItemsSource = _customers;
+                return;
+            }
+
+            var results = _customers
+                .Where(c =>
+                    (!string.IsNullOrEmpty(c.CodeClient) && c.CodeClient.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.NomComplet) && c.NomComplet.Contains(term, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            ManageCustomersGrid.ItemsSource = results;
+        }
+
+        private void OpenEditDialogButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = ManageCustomersGrid.SelectedItem as Customer;
+            if (selected == null)
+            {
+                MessageBox.Show("Sélectionnez un client à modifier.",
+                    "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                var editWindow = new CustomerEditWindow(selected)
+                {
+                    Owner = Application.Current.MainWindow
+                };
+
+                bool? result = editWindow.ShowDialog();
+
+                if (result == true)
+                {
+                    _db.SaveChanges();
+                    ManageCustomersGrid.Items.Refresh();
+                    CustomersGrid.Items.Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la modification : " + ex.Message,
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -44,11 +116,8 @@ namespace ProManSystem.Views
             AdresseTextBox.Text = "";
             RcTextBox.Text = "";
             MatriculeTextBox.Text = "";
-            TypeIdComboBox.SelectedIndex = -1;
+            TypeIdComboBox.SelectedIndex = 0;
             NumeroIdTextBox.Text = "";
-            CAHTTextBox.Text = "";
-            TVATextBox.Text = "";
-            CATTCTextBox.Text = "";
             _selectedCustomer = null;
         }
 
@@ -79,17 +148,6 @@ namespace ProManSystem.Views
             }
         }
 
-        private decimal? ParseDecimal(string text)
-        {
-            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var value))
-                return value;
-
-            if (decimal.TryParse(text, out value))
-                return value;
-
-            return null;
-        }
-
         private void NewCustomerButton_Click(object sender, RoutedEventArgs e)
         {
             PrepareNewCustomer();
@@ -99,43 +157,47 @@ namespace ProManSystem.Views
         {
             if (string.IsNullOrWhiteSpace(NomTextBox.Text))
             {
-                MessageBox.Show("Nom / Raison sociale obligatoire.");
+                MessageBox.Show("Nom / Raison sociale obligatoire.",
+                    "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                NomTextBox.Focus();
                 return;
             }
 
-            var caHt = ParseDecimal(CAHTTextBox.Text);
-            var tva = ParseDecimal(TVATextBox.Text);
-            decimal? caTtc = null;
-
-            if (caHt.HasValue && tva.HasValue)
+            try
             {
-                caTtc = caHt.Value + (caHt.Value * tva.Value / 100m);
+                var typeId = (TypeIdComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString()
+                             ?? TypeIdComboBox.Text;
+
+                var customer = new Customer
+                {
+                    CodeClient = CodeClientTextBox.Text,
+                    NomComplet = NomTextBox.Text.Trim(),
+                    Activite = ActiviteTextBox.Text?.Trim(),
+                    Adresse = AdresseTextBox.Text?.Trim(),
+                    NumeroRC = RcTextBox.Text?.Trim(),
+                    MatriculeFiscal = MatriculeTextBox.Text?.Trim(),
+                    TypeIdentification = typeId,
+                    NumeroIdentification = NumeroIdTextBox.Text?.Trim(),
+                    CA_HT = null,
+                    TauxTVA = null,
+                    CA_TTC = null
+                };
+
+                _db.Customers.Add(customer);
+                _db.SaveChanges();
+
+                _customers.Add(customer);
+
+                MessageBox.Show("Client enregistré avec succès.",
+                    "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                PrepareNewCustomer();
             }
-
-            var typeId = (TypeIdComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                         ?? TypeIdComboBox.Text;
-
-            var customer = new Customer
+            catch (Exception ex)
             {
-                CodeClient = CodeClientTextBox.Text,
-                NomComplet = NomTextBox.Text,
-                Activite = ActiviteTextBox.Text,
-                Adresse = AdresseTextBox.Text,
-                NumeroRC = RcTextBox.Text,
-                MatriculeFiscal = MatriculeTextBox.Text,
-                TypeIdentification = typeId,
-                NumeroIdentification = NumeroIdTextBox.Text,
-                CA_HT = caHt,
-                TauxTVA = tva,
-                CA_TTC = caTtc
-            };
-
-            _db.Customers.Add(customer);
-            _db.SaveChanges();
-
-            _customers.Add(customer);
-
-            PrepareNewCustomer();
+                MessageBox.Show("Erreur lors de l'enregistrement : " + ex.Message,
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CustomersGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -152,79 +214,6 @@ namespace ProManSystem.Views
             MatriculeTextBox.Text = _selectedCustomer.MatriculeFiscal;
             TypeIdComboBox.Text = _selectedCustomer.TypeIdentification;
             NumeroIdTextBox.Text = _selectedCustomer.NumeroIdentification;
-            CAHTTextBox.Text = _selectedCustomer.CA_HT?.ToString();
-            TVATextBox.Text = _selectedCustomer.TauxTVA?.ToString();
-            CATTCTextBox.Text = _selectedCustomer.CA_TTC?.ToString();
-        }
-
-        // زر الرجوع داخل UserControl لا يفعل شيئاً حالياً
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            // يمكن لاحقاً رفع حدث إلى HomeWindow إن احتجت
-        }
-
-        private void UpdateCustomerButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_selectedCustomer == null)
-            {
-                MessageBox.Show("Sélectionnez un client à modifier.");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(NomTextBox.Text))
-            {
-                MessageBox.Show("Nom / Raison sociale obligatoire.");
-                return;
-            }
-
-            var caHt = ParseDecimal(CAHTTextBox.Text);
-            var tva = ParseDecimal(TVATextBox.Text);
-            decimal? caTtc = null;
-
-            if (caHt.HasValue && tva.HasValue)
-                caTtc = caHt.Value + (caHt.Value * tva.Value / 100m);
-
-            var typeId = (TypeIdComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                         ?? TypeIdComboBox.Text;
-
-            _selectedCustomer.NomComplet = NomTextBox.Text;
-            _selectedCustomer.Activite = ActiviteTextBox.Text;
-            _selectedCustomer.Adresse = AdresseTextBox.Text;
-            _selectedCustomer.NumeroRC = RcTextBox.Text;
-            _selectedCustomer.MatriculeFiscal = MatriculeTextBox.Text;
-            _selectedCustomer.TypeIdentification = typeId;
-            _selectedCustomer.NumeroIdentification = NumeroIdTextBox.Text;
-            _selectedCustomer.CA_HT = caHt;
-            _selectedCustomer.TauxTVA = tva;
-            _selectedCustomer.CA_TTC = caTtc;
-
-            _db.SaveChanges();
-            CustomersGrid.Items.Refresh();
-        }
-
-        private void DeleteCustomerButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_selectedCustomer == null)
-            {
-                MessageBox.Show("Sélectionnez un client à supprimer.");
-                return;
-            }
-
-            var result = MessageBox.Show(
-                $"Supprimer le client {_selectedCustomer.CodeClient} ?",
-                "Confirmation",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (result != MessageBoxResult.Yes)
-                return;
-
-            _db.Customers.Remove(_selectedCustomer);
-            _db.SaveChanges();
-            _customers.Remove(_selectedCustomer);
-            _selectedCustomer = null;
-
-            PrepareNewCustomer();
         }
     }
 }

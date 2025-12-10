@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using ProManSystem.Views;
 
@@ -9,28 +10,29 @@ namespace ProManSystem
         public HomeWindow()
         {
             InitializeComponent();
-
-            // عند تشغيل البرنامج نعرض تبويب الزبائن مباشرة
             MainContent.Content = new ClientsView();
-            HighlightTab("Clients");
+            SetActiveButton(ClientsButton);
         }
 
-        // عند الضغط على زر الزبائن
         private void ClientsButton_Click(object sender, RoutedEventArgs e)
         {
+            SetActiveButton(ClientsButton);
             MainContent.Content = new ClientsView();
-            HighlightTab("Clients");
         }
 
-        // دالة بسيطة لتلوين التبويب النشط
-        private void HighlightTab(string tabName)
+        private void SuppliersButton_Click(object sender, RoutedEventArgs e)
         {
-            // تبويب الزبائن
-            ClientsButton.Background = tabName == "Clients"
-                ? new SolidColorBrush(Color.FromRgb(45, 55, 72)) // لون أغمق للتبويب النشط
-                : Brushes.Transparent;
+            SetActiveButton(SuppliersButton);
+            MainContent.Content = new SuppliersEditorView();
+        }
 
-            // لاحقاً عندما نضيف تبويبات أخرى نحدّث ألوانها هنا أيضاً
+        private void SetActiveButton(Button activeButton)
+        {
+            ClientsButton.Background = Brushes.Transparent;
+            ProductsButton.Background = Brushes.Transparent;
+            SuppliersButton.Background = Brushes.Transparent;
+
+            activeButton.Background = new SolidColorBrush(Color.FromRgb(55, 71, 79));
         }
     }
 }

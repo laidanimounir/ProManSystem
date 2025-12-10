@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="ProManSystem.Views.CustomersEditorView"
+﻿<UserControl x:Class="ProManSystem.Views.SuppliersEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <UserControl.Resources>
-       
+        
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Height" Value="32"/>
             <Setter Property="Padding" Value="8,6"/>
@@ -13,13 +13,13 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#2196F3"/>
+                    <Setter Property="BorderBrush" Value="#FF9800"/>
                     <Setter Property="BorderThickness" Value="2"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-       
+        
         <Style x:Key="ModernButton" TargetType="Button">
             <Setter Property="Height" Value="36"/>
             <Setter Property="Padding" Value="20,0"/>
@@ -50,7 +50,7 @@
             </Style.Triggers>
         </Style>
 
-      
+        
         <Style x:Key="FieldLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="Medium"/>
@@ -59,7 +59,7 @@
             <Setter Property="Margin" Value="0,0,12,0"/>
         </Style>
 
-     
+       
         <Style x:Key="ModernComboBox" TargetType="ComboBox">
             <Setter Property="Height" Value="32"/>
             <Setter Property="Padding" Value="8,6"/>
@@ -71,8 +71,7 @@
     <Grid Margin="15">
         <TabControl>
 
-          
-            <TabItem Header="Ajouter / Recherche" FontSize="13" FontWeight="SemiBold">
+            <TabItem Header="Ajouter / Recherche" FontSize="13" FontWeight="SemiBold" Height="23" Margin="-2,-2,-2,0" VerticalAlignment="Top">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <Grid Margin="15">
                         <Grid.RowDefinitions>
@@ -91,23 +90,23 @@
                             </Border.Effect>
 
                             <StackPanel>
-                               
+                                
                                 <Grid Margin="0,0,0,20">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Border Width="50" Height="50" Background="#E3F2FD" 
+                                    <Border Width="50" Height="50" Background="#FFF3E0" 
                                             CornerRadius="25" Margin="0,0,15,0">
-                                        <TextBlock Text="👤" FontSize="26" 
+                                        <TextBlock Text="🏭" FontSize="26" 
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="Nouveau client" FontSize="18" 
-                                                   FontWeight="Bold" Foreground="#1976D2"/>
-                                        <TextBlock Text="Remplissez les informations du client" 
+                                        <TextBlock Text="Nouveau fournisseur" FontSize="18" 
+                                                   FontWeight="Bold" Foreground="#FF6F00"/>
+                                        <TextBlock Text="Remplissez les informations du fournisseur" 
                                                    FontSize="12" Foreground="#757575" Margin="0,2,0,0"/>
                                     </StackPanel>
                                 </Grid>
@@ -133,25 +132,25 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                   
-                                    <TextBlock Text="Code client :" Grid.Row="0" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
-                                    <TextBox x:Name="CodeClientTextBox" Grid.Row="0" Grid.Column="1"
+                                    
+                                    <TextBlock Text="Code fournisseur :" Grid.Row="0" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="CodeFournisseurTextBox" Grid.Row="0" Grid.Column="1"
                                              Width="180" HorizontalAlignment="Left"
                                              IsReadOnly="True" Background="#FAFAFA"
                                              Style="{StaticResource ModernTextBox}"/>
 
-                                   
-                                    <TextBlock Text="Nom / Raison sociale :" Grid.Row="1" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
+                                    
+                                    <TextBlock Text="Désignation :" Grid.Row="1" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
                                     <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-                                        <TextBox x:Name="NomTextBox" Style="{StaticResource ModernTextBox}"/>
-                                        <TextBlock Text="Ex: Société SARL, Mohamed Ali..." 
+                                        <TextBox x:Name="DesignationTextBox" Style="{StaticResource ModernTextBox}"/>
+                                        <TextBlock Text="Ex: ENIEM, Sonelgaz, Naftal..." 
                                                    Foreground="#AAAAAA" FontStyle="Italic" FontSize="12"
                                                    IsHitTestVisible="False" VerticalAlignment="Center" Margin="10,0,0,0">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ElementName=NomTextBox, Path=Text}" Value="">
+                                                        <DataTrigger Binding="{Binding ElementName=DesignationTextBox, Path=Text}" Value="">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -160,11 +159,11 @@
                                         </TextBlock>
                                     </Grid>
 
-                                  
+                                    
                                     <TextBlock Text="Activité :" Grid.Row="2" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
                                     <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3">
                                         <TextBox x:Name="ActiviteTextBox" Style="{StaticResource ModernTextBox}"/>
-                                        <TextBlock Text="Ex: Commerce, Informatique, Construction..." 
+                                        <TextBlock Text="Ex: Fourniture électrique, Import/Export..." 
                                                    Foreground="#AAAAAA" FontStyle="Italic" FontSize="12"
                                                    IsHitTestVisible="False" VerticalAlignment="Center" Margin="10,0,0,0">
                                             <TextBlock.Style>
@@ -180,10 +179,11 @@
                                         </TextBlock>
                                     </Grid>
 
+                                    
                                     <TextBlock Text="Adresse :" Grid.Row="3" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
                                     <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
                                         <TextBox x:Name="AdresseTextBox" Style="{StaticResource ModernTextBox}"/>
-                                        <TextBlock Text="Ex: Rue 123, Alger, Cité..." 
+                                        <TextBlock Text="Ex: Zone industrielle, Route nationale..." 
                                                    Foreground="#AAAAAA" FontStyle="Italic" FontSize="12"
                                                    IsHitTestVisible="False" VerticalAlignment="Center" Margin="10,0,0,0">
                                             <TextBlock.Style>
@@ -199,19 +199,19 @@
                                         </TextBlock>
                                     </Grid>
 
-                                    
+                                   
                                     <TextBlock Text="N° RC :" Grid.Row="4" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
                                     <TextBox x:Name="RcTextBox" Grid.Row="4" Grid.Column="1"
                                              Width="220" HorizontalAlignment="Left"
                                              Style="{StaticResource ModernTextBox}"/>
 
-                                 
+                                    
                                     <TextBlock Text="Matricule fiscal :" Grid.Row="5" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
                                     <TextBox x:Name="MatriculeTextBox" Grid.Row="5" Grid.Column="1"
                                              Width="220" HorizontalAlignment="Left"
                                              Style="{StaticResource ModernTextBox}"/>
 
-                                 
+                                   
                                     <TextBlock Text="Type ident. :" Grid.Row="6" Grid.Column="0" Style="{StaticResource FieldLabel}"/>
                                     <ComboBox x:Name="TypeIdComboBox" Grid.Row="6" Grid.Column="1"
                                               Width="160" HorizontalAlignment="Left"
@@ -225,18 +225,18 @@
                                     <TextBox x:Name="NumeroIdTextBox" Grid.Row="6" Grid.Column="3"
                                              Style="{StaticResource ModernTextBox}"/>
 
-                                  
+                                   
                                     <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4"
                                                 Orientation="Horizontal" Margin="0,10,0,0">
-                                        <Button x:Name="NewCustomerButton" Content="➕ Nouveau" 
+                                        <Button x:Name="NewSupplierButton" Content="➕ Nouveau" 
                                                 Width="110" Margin="0,0,12,0"
                                                 Background="#4CAF50"
-                                                Click="NewCustomerButton_Click"
+                                                Click="NewSupplierButton_Click"
                                                 Style="{StaticResource ModernButton}"/>
-                                        <Button x:Name="SaveCustomerButton" Content="💾 Enregistrer" 
+                                        <Button x:Name="SaveSupplierButton" Content="💾 Enregistrer" 
                                                 Width="130"
-                                                Background="#2196F3"
-                                                Click="SaveCustomerButton_Click"
+                                                Background="#FF9800"
+                                                Click="SaveSupplierButton_Click"
                                                 Style="{StaticResource ModernButton}"/>
                                     </StackPanel>
                                 </Grid>
@@ -279,14 +279,14 @@
                                         </Grid>
 
                                         <Button Grid.Column="1" Content="Rechercher" 
-                                                Width="110" Margin="12,0,0,0" Background="#2196F3"
+                                                Width="110" Margin="12,0,0,0" Background="#FF9800"
                                                 Click="SearchButton_Click"
                                                 Style="{StaticResource ModernButton}"/>
                                     </Grid>
                                 </Border>
 
-                                
-                                <DataGrid x:Name="CustomersGrid" Grid.Row="2"
+                              
+                                <DataGrid x:Name="SuppliersGrid" Grid.Row="2"
                                           AutoGenerateColumns="False"
                                           IsReadOnly="True"
                                           CanUserAddRows="False"
@@ -296,7 +296,7 @@
                                           HorizontalGridLinesBrush="#F0F0F0"
                                           AlternatingRowBackground="#FAFAFA"
                                           RowHeight="38"
-                                          SelectionChanged="CustomersGrid_SelectionChanged">
+                                          SelectionChanged="SuppliersGrid_SelectionChanged">
 
                                     <DataGrid.RowStyle>
                                         <Style TargetType="DataGridRow">
@@ -304,18 +304,17 @@
                                             <Setter Property="FontSize" Value="12.5"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#E3F2FD"/>
+                                                    <Setter Property="Background" Value="#FFF3E0"/>
                                                     <Setter Property="Cursor" Value="Hand"/>
                                                 </Trigger>
                                                 <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="#BBDEFB"/>
-                                                    <Setter Property="Foreground" Value="#1565C0"/>
+                                                    <Setter Property="Background" Value="#FFE0B2"/>
+                                                    <Setter Property="Foreground" Value="#E65100"/>
                                                 </Trigger>
-                                                <DataTrigger Binding="{Binding EstRadie}" Value="True">
+                                                <DataTrigger Binding="{Binding EstActif}" Value="False">
                                                     <Setter Property="Background" Value="#FFCDD2"/>
                                                     <Setter Property="Foreground" Value="#C62828"/>
                                                     <Setter Property="FontStyle" Value="Italic"/>
-                                                    <Setter Property="TextBlock.TextDecorations" Value="Strikethrough"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -352,17 +351,16 @@
                                     </DataGrid.CellStyle>
 
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Code" Binding="{Binding CodeClient}" Width="85"/>
-                                        <DataGridTextColumn Header="Nom" Binding="{Binding NomComplet}" Width="160"/>
+                                        <DataGridTextColumn Header="Code" Binding="{Binding CodeFournisseur}" Width="85"/>
+                                        <DataGridTextColumn Header="Désignation" Binding="{Binding Designation}" Width="160"/>
                                         <DataGridTextColumn Header="Activité" Binding="{Binding Activite}" Width="110"/>
                                         <DataGridTextColumn Header="Adresse" Binding="{Binding Adresse}" Width="210"/>
                                         <DataGridTextColumn Header="N° RC" Binding="{Binding NumeroRC}" Width="120"/>
                                         <DataGridTextColumn Header="Matricule fiscal" Binding="{Binding MatriculeFiscal}" Width="130"/>
                                         <DataGridTextColumn Header="Type ID" Binding="{Binding TypeIdentification}" Width="85"/>
                                         <DataGridTextColumn Header="N° ID" Binding="{Binding NumeroIdentification}" Width="120"/>
-                                        <DataGridTextColumn Header="CA HT" Binding="{Binding CA_HT}" Width="90"/>
-                                        <DataGridTextColumn Header="TVA" Binding="{Binding TauxTVA}" Width="70"/>
-                                        <DataGridTextColumn Header="CA TTC" Binding="{Binding CA_TTC}" Width="90"/>
+                                        <DataGridTextColumn Header="Total Achats" Binding="{Binding TotalAchats}" Width="110"/>
+                                        <DataGridTextColumn Header="Dette" Binding="{Binding Dette}" Width="90"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>
@@ -371,7 +369,7 @@
                 </ScrollViewer>
             </TabItem>
 
-         
+           
             <TabItem Header="Gestion / Détails" FontSize="13" FontWeight="SemiBold">
                 <Grid Margin="15">
                     <Grid.RowDefinitions>
@@ -380,7 +378,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    
+                  
                     <Border Grid.Row="0" Background="White" 
                             BorderBrush="#E0E0E0" BorderThickness="1"
                             CornerRadius="8" Padding="16">
@@ -408,18 +406,17 @@
 
                             <StackPanel Grid.Column="2" Orientation="Horizontal">
                                 <Button Content="Rechercher" Width="110" Margin="0,0,12,0"
-                                        Background="#2196F3"
+                                        Background="#FF9800"
                                         Click="ManageSearchButton_Click"
                                         Style="{StaticResource ModernButton}"/>
                                 <Button Content="✏️ Modifier" Width="130"
-                                        Background="#FF9800"
+                                        Background="#FF6F00"
                                         Click="OpenEditDialogButton_Click"
                                         Style="{StaticResource ModernButton}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
 
-                   
                     <Border Grid.Row="2" Background="White"
                             BorderBrush="#E0E0E0" BorderThickness="1"
                             CornerRadius="8" Padding="16">
@@ -428,7 +425,7 @@
                                               BlurRadius="12" ShadowDepth="2"/>
                         </Border.Effect>
 
-                        <DataGrid x:Name="ManageCustomersGrid"
+                        <DataGrid x:Name="ManageSuppliersGrid"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   CanUserAddRows="False"
@@ -451,11 +448,10 @@
                                             <Setter Property="Background" Value="#FFE0B2"/>
                                             <Setter Property="Foreground" Value="#E65100"/>
                                         </Trigger>
-                                        <DataTrigger Binding="{Binding EstRadie}" Value="True">
+                                        <DataTrigger Binding="{Binding EstActif}" Value="False">
                                             <Setter Property="Background" Value="#FFCDD2"/>
                                             <Setter Property="Foreground" Value="#C62828"/>
                                             <Setter Property="FontStyle" Value="Italic"/>
-                                            <Setter Property="TextBlock.TextDecorations" Value="Strikethrough"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -491,17 +487,16 @@
                             </DataGrid.CellStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Code" Binding="{Binding CodeClient}" Width="85"/>
-                                <DataGridTextColumn Header="Nom" Binding="{Binding NomComplet}" Width="160"/>
+                                <DataGridTextColumn Header="Code" Binding="{Binding CodeFournisseur}" Width="85"/>
+                                <DataGridTextColumn Header="Désignation" Binding="{Binding Designation}" Width="160"/>
                                 <DataGridTextColumn Header="Activité" Binding="{Binding Activite}" Width="110"/>
                                 <DataGridTextColumn Header="Adresse" Binding="{Binding Adresse}" Width="210"/>
                                 <DataGridTextColumn Header="N° RC" Binding="{Binding NumeroRC}" Width="120"/>
                                 <DataGridTextColumn Header="Matricule fiscal" Binding="{Binding MatriculeFiscal}" Width="130"/>
                                 <DataGridTextColumn Header="Type ID" Binding="{Binding TypeIdentification}" Width="85"/>
                                 <DataGridTextColumn Header="N° ID" Binding="{Binding NumeroIdentification}" Width="120"/>
-                                <DataGridTextColumn Header="CA HT" Binding="{Binding CA_HT}" Width="90"/>
-                                <DataGridTextColumn Header="TVA" Binding="{Binding TauxTVA}" Width="70"/>
-                                <DataGridTextColumn Header="CA TTC" Binding="{Binding CA_TTC}" Width="90"/>
+                                <DataGridTextColumn Header="Total Achats" Binding="{Binding TotalAchats}" Width="110"/>
+                                <DataGridTextColumn Header="Dette" Binding="{Binding Dette}" Width="90"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Border>

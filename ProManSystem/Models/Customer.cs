@@ -35,6 +35,10 @@ namespace ProManSystem.Models
 
         public decimal? CA_HT { get; set; }     
         public decimal? TauxTVA { get; set; }   
-        public decimal? CA_TTC { get; set; }     
+        public decimal? CA_TTC { get; set; }
+
+        public bool EstRadie { get; set; }
+        public DateTime? DateRadiation { get; set; }  
+
     }
 }

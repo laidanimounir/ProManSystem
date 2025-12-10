@@ -1,0 +1,291 @@
+﻿<Window x:Class="ProManSystem.Views.CustomerEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Modifier le client" Height="720" Width="650"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F5F7FA">
+
+    <Window.Resources>
+    
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="BorderBrush" Value="#BDBDBD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#2196F3"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+                <Trigger Property="IsReadOnly" Value="True">
+                    <Setter Property="Background" Value="#FAFAFA"/>
+                    <Setter Property="Foreground" Value="#757575"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="BorderBrush" Value="#BDBDBD"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Opacity" Value="0.7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="#424242"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+       
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1976D2"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" CornerRadius="8" Margin="15">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.1" 
+                              BlurRadius="15" ShadowDepth="3"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            
+            <Border Grid.Row="0" Background="#1976D2" 
+                    CornerRadius="8,8,0,0" Padding="20,18">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="45" Height="45" Background="#1565C0" 
+                            CornerRadius="23" Margin="0,0,15,0">
+                        <TextBlock Text="✏️" FontSize="24" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Modifier le client" FontSize="18" 
+                                   FontWeight="Bold" Foreground="White"/>
+                        <TextBlock x:Name="HeaderSubtitle" FontSize="12" 
+                                   Foreground="#BBDEFB" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
+                          Padding="20,15,20,15">
+                <StackPanel>
+
+                    
+                    <TextBlock Text="📋 INFORMATIONS GÉNÉRALES" Style="{StaticResource SectionHeader}"/>
+
+                    <TextBlock Text="Code client :" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="CodeClientTextBox" IsReadOnly="True" 
+                             Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Nom / Raison sociale :" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="NomTextBox" 
+                             Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Activité :" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="ActiviteTextBox" 
+                             Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Adresse :" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="AdresseTextBox" 
+                             Style="{StaticResource ModernTextBox}" Margin="0,0,0,20"/>
+
+                  
+                    <TextBlock Text="🏢 INFORMATIONS LÉGALES" Style="{StaticResource SectionHeader}"/>
+
+                    <TextBlock Text="N° RC :" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="RcTextBox" 
+                             Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Matricule fiscal :" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="MatriculeTextBox" 
+                             Style="{StaticResource ModernTextBox}" Margin="0,0,0,20"/>
+
+                  
+                    <TextBlock Text="🆔 IDENTIFICATION" Style="{StaticResource SectionHeader}"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Type ident. :" Style="{StaticResource FieldLabel}"/>
+                            <ComboBox x:Name="TypeIdComboBox" 
+                                      Style="{StaticResource ModernComboBox}">
+                                <ComboBoxItem Content="Article"/>
+                                <ComboBoxItem Content="BP"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="N° ident. :" Style="{StaticResource FieldLabel}"/>
+                            <TextBox x:Name="NumeroIdTextBox" 
+                                     Style="{StaticResource ModernTextBox}"/>
+                        </StackPanel>
+                    </Grid>
+                    <Border Height="20"/>
+
+                    
+                    <TextBlock Text="💰 INFORMATIONS FINANCIÈRES" Style="{StaticResource SectionHeader}"/>
+
+                    
+                    <Border Background="#E3F2FD" BorderBrush="#2196F3" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="ℹ️" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Ces données sont calculées automatiquement depuis les factures." 
+                                       FontSize="12" Foreground="#1565C0" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                     
+                        <StackPanel Grid.Row="0" Grid.Column="0">
+                            <TextBlock Text="CA HT :" Style="{StaticResource FieldLabel}"/>
+                            <TextBox x:Name="CAHTTextBox" IsReadOnly="True"
+                                     Style="{StaticResource ModernTextBox}"/>
+                        </StackPanel>
+
+                      
+                        <StackPanel Grid.Row="0" Grid.Column="2">
+                            <TextBlock Text="TVA % :" Style="{StaticResource FieldLabel}"/>
+                            <TextBox x:Name="TVATextBox" IsReadOnly="True"
+                                     Style="{StaticResource ModernTextBox}"/>
+                        </StackPanel>
+
+                        
+                        <StackPanel Grid.Row="2" Grid.Column="0">
+                            <TextBlock Text="CA TTC :" Style="{StaticResource FieldLabel}"/>
+                            <TextBox x:Name="CATTCTextBox" IsReadOnly="True"
+                                     Style="{StaticResource ModernTextBox}"/>
+                        </StackPanel>
+                    </Grid>
+                    <Border Height="20"/>
+
+                    
+                    <TextBlock Text="⚠️ STATUT CLIENT" Style="{StaticResource SectionHeader}"/>
+
+                    <Border x:Name="RadieBorder" Background="#FFF3E0" 
+                            BorderBrush="#FF9800" BorderThickness="2"
+                            CornerRadius="6" Padding="15" Margin="0,0,0,12"
+                            Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock Text="⚠️ Client radié" FontSize="13" 
+                                       FontWeight="Bold" Foreground="#E65100" Margin="0,0,0,8"/>
+                            <CheckBox x:Name="RadieCheckBox" Content="Client radié" 
+                                      FontSize="13" FontWeight="SemiBold"
+                                      Checked="RadieCheckBox_CheckedChanged"
+                                      Unchecked="RadieCheckBox_CheckedChanged"/>
+
+                            <Border Height="10"/>
+                            <TextBlock Text="Date radiation :" Style="{StaticResource FieldLabel}"/>
+                            <DatePicker x:Name="DateRadiationPicker" Height="34" 
+                                        FontSize="13" BorderBrush="#BDBDBD"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="NonRadieBorder" Background="#E8F5E9" 
+                            BorderBrush="#4CAF50" BorderThickness="2"
+                            CornerRadius="6" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="✅ Client actif" FontSize="13" 
+                                       FontWeight="Bold" Foreground="#2E7D32" Margin="0,0,0,8"/>
+                            <CheckBox x:Name="RadieCheckBox2" Content="Marquer comme radié" 
+                                      FontSize="13"
+                                      Checked="RadieCheckBox_CheckedChanged"
+                                      Unchecked="RadieCheckBox_CheckedChanged"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+           
+            <Border Grid.Row="2" Background="#F5F5F5" 
+                    BorderBrush="#E0E0E0" BorderThickness="0,1,0,0"
+                    CornerRadius="0,0,8,8" Padding="20,15">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="❌ Annuler" Width="110" Margin="0,0,12,0"
+                            Background="#9E9E9E"
+                            Click="CancelButton_Click"
+                            Style="{StaticResource ModernButton}"/>
+                    <Button Content="✅ Enregistrer" Width="140"
+                            Background="#4CAF50"
+                            Click="SaveButton_Click"
+                            Style="{StaticResource ModernButton}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
