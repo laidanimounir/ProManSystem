@@ -7,7 +7,6 @@
         Background="#F5F7FA">
 
     <Window.Resources>
-       
         <Style x:Key="NavButton" TargetType="Button">
             <Setter Property="Height" Value="50"/>
             <Setter Property="Margin" Value="10,0,10,8"/>
@@ -22,7 +21,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" 
+                        <Border x:Name="border"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
@@ -42,7 +41,6 @@
             </Setter>
         </Style>
 
-        
         <Style x:Key="NavButtonActive" TargetType="Button" BasedOn="{StaticResource NavButton}">
             <Setter Property="Background" Value="#4299E1"/>
             <Setter Property="Foreground" Value="White"/>
@@ -65,7 +63,7 @@
                 BorderBrush="#E2E8F0" BorderThickness="0,0,0,1"
                 Height="65">
             <Border.Effect>
-                <DropShadowEffect Color="#000000" Opacity="0.05" 
+                <DropShadowEffect Color="#000000" Opacity="0.05"
                                   BlurRadius="8" ShadowDepth="2"/>
             </Border.Effect>
 
@@ -76,11 +74,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="40" Height="40" Background="#4299E1" 
+                    <Border Width="40" Height="40" Background="#4299E1"
                             CornerRadius="10" Margin="0,0,12,0">
-                        <TextBlock Text="⚙️" FontSize="22" 
+                        <TextBlock Text="⚙️" FontSize="22"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
@@ -91,15 +88,14 @@
                     </StackPanel>
                 </StackPanel>
 
-                
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="35" Height="35" Background="#EDF2F7" 
+                    <Border Width="35" Height="35" Background="#EDF2F7"
                             CornerRadius="18" Margin="0,0,10,0">
-                        <TextBlock Text="👤" FontSize="18" 
+                        <TextBlock Text="👤" FontSize="18"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Administrateur" FontSize="13" 
+                        <TextBlock Text="Administrateur" FontSize="13"
                                    FontWeight="SemiBold" Foreground="#2D3748"/>
                         <TextBlock Text="En ligne" FontSize="11" Foreground="#48BB78"/>
                     </StackPanel>
@@ -107,115 +103,110 @@
             </Grid>
         </Border>
 
+       
         <Grid Grid.Row="1" Grid.Column="0" Background="#1A202C">
             <Grid.Effect>
-                <DropShadowEffect Color="#000000" Opacity="0.1" 
+                <DropShadowEffect Color="#000000" Opacity="0.1"
                                   BlurRadius="10" ShadowDepth="0" Direction="0"/>
             </Grid.Effect>
 
             <StackPanel Margin="0,20,0,0">
-               
                 <TextBlock Text="MENU PRINCIPAL"
                            Foreground="#718096" FontSize="11" FontWeight="Bold"
                            Margin="20,0,0,15"/>
 
-               
+              
                 <Button x:Name="ClientsButton"
                         Style="{StaticResource NavButtonActive}"
                         Click="ClientsButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="#3182CE" 
+                        <Border Width="32" Height="32" Background="#3182CE"
                                 CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="👥" FontSize="16" 
+                            <TextBlock Text="👥" FontSize="16"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="Clients" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
 
-            
+              
                 <Button x:Name="ProductsButton"
-                        Style="{StaticResource NavButton}">
+                        Style="{StaticResource NavButton}"
+                        Click="ProductsButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent" 
+                        <Border Width="32" Height="32" Background="Transparent"
                                 CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="📦" FontSize="16" 
+                            <TextBlock Text="📦" FontSize="16"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="Produits" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
 
-
                
                 <Button x:Name="SuppliersButton"
-        Style="{StaticResource NavButton}"
-        Click="SuppliersButton_Click">
+                        Style="{StaticResource NavButton}"
+                        Click="SuppliersButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent" 
-                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="🏭" FontSize="16" 
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Width="32" Height="32" Background="Transparent"
+                                CornerRadius="6" Margin="0,0,12,0">
+                            <TextBlock Text="🏭" FontSize="16"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="Fournisseurs" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
 
+               
                 <Button x:Name="RawMaterialsButton"
-        Style="{StaticResource NavButton}"
-        Click="RawMaterialsButton_Click">
+                        Style="{StaticResource NavButton}"
+                        Click="RawMaterialsButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Border Width="32" Height="32" Background="Transparent"
-                CornerRadius="6" Margin="0,0,12,0">
+                                CornerRadius="6" Margin="0,0,12,0">
                             <TextBlock Text="🧵" FontSize="16"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="Matières premières" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
 
+              
                 <Button x:Name="PurchaseInvoicesButton"
-        Style="{StaticResource NavButton}"
-        Click="PurchaseInvoicesButton_Click">
+                        Style="{StaticResource NavButton}"
+                        Click="PurchaseInvoicesButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Border Width="32" Height="32" Background="Transparent"
-                CornerRadius="6" Margin="0,0,12,0">
+                                CornerRadius="6" Margin="0,0,12,0">
                             <TextBlock Text="🧾" FontSize="16"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="Factures achat" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
 
-
-
-
-
                 <Border Height="1" Background="#2D3748" Margin="20,20,20,20"/>
 
-                
                 <TextBlock Text="AUTRES"
                            Foreground="#718096" FontSize="11" FontWeight="Bold"
                            Margin="20,0,0,15"/>
 
-               
                 <Button Style="{StaticResource NavButton}">
                     <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent" 
+                        <Border Width="32" Height="32" Background="Transparent"
                                 CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="⚙️" FontSize="16" 
+                            <TextBlock Text="⚙️" FontSize="16"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="Paramètres" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
 
-              
                 <Button Style="{StaticResource NavButton}">
                     <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent" 
+                        <Border Width="32" Height="32" Background="Transparent"
                                 CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="📊" FontSize="16" 
+                            <TextBlock Text="📊" FontSize="16"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="Rapports" VerticalAlignment="Center" FontSize="14"/>
@@ -223,24 +214,22 @@
                 </Button>
             </StackPanel>
 
-           
             <Border VerticalAlignment="Bottom" Margin="15,0,15,20"
                     Background="#2D3748" CornerRadius="8" Padding="12">
                 <StackPanel>
-                    <TextBlock Text="💡 Astuce du jour" FontSize="11" 
+                    <TextBlock Text="💡 Astuce du jour" FontSize="11"
                                Foreground="#CBD5E0" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBlock Text="Utilisez Ctrl+S pour sauvegarder rapidement." 
+                    <TextBlock Text="Utilisez Ctrl+S pour sauvegarder rapidement."
                                FontSize="10" Foreground="#A0AEC0" TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
         </Grid>
 
-       
         <Border Grid.Row="1" Grid.Column="0"
                 HorizontalAlignment="Right" Width="1"
                 Background="#E2E8F0"/>
 
-      
+        
         <Grid Grid.Row="1" Grid.Column="1" Background="#F5F7FA">
             <ContentControl x:Name="MainContent" Margin="0"/>
         </Grid>

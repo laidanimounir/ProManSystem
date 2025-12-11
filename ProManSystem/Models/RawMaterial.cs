@@ -19,5 +19,7 @@ namespace ProManSystem.Models
         public decimal PMAPA { get; set; } = 0m;                  
 
         public DateTime DateCreation { get; set; } = DateTime.Now;
+        public ICollection<ProductRecipe> ProductRecipes { get; set; } = new List<ProductRecipe>();
+
     }
 }

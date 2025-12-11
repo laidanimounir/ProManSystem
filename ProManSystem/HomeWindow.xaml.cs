@@ -3,7 +3,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using ProManSystem.Views;
 
-
 namespace ProManSystem
 {
     public partial class HomeWindow : Window
@@ -13,6 +12,19 @@ namespace ProManSystem
             InitializeComponent();
             MainContent.Content = new ClientsView();
             SetActiveButton(ClientsButton);
+        }
+
+        private void SetActiveButton(Button activeButton)
+        {
+          
+            ClientsButton.Background = Brushes.Transparent;
+            ProductsButton.Background = Brushes.Transparent;
+            SuppliersButton.Background = Brushes.Transparent;
+            RawMaterialsButton.Background = Brushes.Transparent;
+            PurchaseInvoicesButton.Background = Brushes.Transparent;
+
+            
+            activeButton.Background = new SolidColorBrush(Color.FromRgb(55, 71, 79));
         }
 
         private void ClientsButton_Click(object sender, RoutedEventArgs e)
@@ -27,17 +39,6 @@ namespace ProManSystem
             MainContent.Content = new SuppliersEditorView();
         }
 
-        private void SetActiveButton(Button activeButton)
-        {
-            ClientsButton.Background = Brushes.Transparent;
-            ProductsButton.Background = Brushes.Transparent;
-            SuppliersButton.Background = Brushes.Transparent;
-            RawMaterialsButton.Background = Brushes.Transparent;
-            PurchaseInvoicesButton.Background = Brushes.Transparent;
-
-            activeButton.Background = new SolidColorBrush(Color.FromRgb(55, 71, 79));
-        }
-
         private void RawMaterialsButton_Click(object sender, RoutedEventArgs e)
         {
             SetActiveButton(RawMaterialsButton);
@@ -50,6 +51,10 @@ namespace ProManSystem
             MainContent.Content = new PurchaseInvoicesView();
         }
 
-
+        private void ProductsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(ProductsButton);
+            MainContent.Content = new ProductsView();  
+        }
     }
 }

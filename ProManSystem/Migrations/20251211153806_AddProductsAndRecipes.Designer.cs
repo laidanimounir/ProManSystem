@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProManSystem.Data;
 
@@ -10,9 +11,11 @@ using ProManSystem.Data;
 namespace ProManSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251211153806_AddProductsAndRecipes")]
+    partial class AddProductsAndRecipes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
@@ -338,13 +341,13 @@ namespace ProManSystem.Migrations
             modelBuilder.Entity("ProManSystem.Models.ProductRecipe", b =>
                 {
                     b.HasOne("ProManSystem.Models.Product", "Product")
-                        .WithMany("ProductRecipes")
+                        .WithMany("Recette")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProManSystem.Models.RawMaterial", "RawMaterial")
-                        .WithMany("ProductRecipes")
+                        .WithMany()
                         .HasForeignKey("RawMaterialId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -395,17 +398,12 @@ namespace ProManSystem.Migrations
 
             modelBuilder.Entity("ProManSystem.Models.Product", b =>
                 {
-                    b.Navigation("ProductRecipes");
+                    b.Navigation("Recette");
                 });
 
             modelBuilder.Entity("ProManSystem.Models.PurchaseInvoice", b =>
                 {
                     b.Navigation("Lignes");
-                });
-
-            modelBuilder.Entity("ProManSystem.Models.RawMaterial", b =>
-                {
-                    b.Navigation("ProductRecipes");
                 });
 #pragma warning restore 612, 618
         }
