@@ -147,7 +147,7 @@
                 </Button>
 
 
-                <!-- Suppliers Button -->
+               
                 <Button x:Name="SuppliersButton"
         Style="{StaticResource NavButton}"
         Click="SuppliersButton_Click">
@@ -160,6 +160,20 @@
                         <TextBlock Text="Fournisseurs" VerticalAlignment="Center" FontSize="14"/>
                     </StackPanel>
                 </Button>
+
+                <Button x:Name="RawMaterialsButton"
+        Style="{StaticResource NavButton}"
+        Click="RawMaterialsButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="32" Height="32" Background="Transparent"
+                CornerRadius="6" Margin="0,0,12,0">
+                            <TextBlock Text="🧵" FontSize="16"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Matières premières" VerticalAlignment="Center" FontSize="14"/>
+                    </StackPanel>
+                </Button>
+
 
 
 

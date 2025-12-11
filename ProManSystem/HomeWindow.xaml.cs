@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using ProManSystem.Views;
 
+
 namespace ProManSystem
 {
     public partial class HomeWindow : Window
@@ -31,8 +32,17 @@ namespace ProManSystem
             ClientsButton.Background = Brushes.Transparent;
             ProductsButton.Background = Brushes.Transparent;
             SuppliersButton.Background = Brushes.Transparent;
+            RawMaterialsButton.Background = Brushes.Transparent;
+
 
             activeButton.Background = new SolidColorBrush(Color.FromRgb(55, 71, 79));
         }
+
+        private void RawMaterialsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(RawMaterialsButton);
+            MainContent.Content = new RawMaterialsEditorView();
+        }
+
     }
 }
