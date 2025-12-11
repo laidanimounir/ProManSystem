@@ -1,0 +1,186 @@
+﻿<Window x:Class="ProManSystem.Views.SelectSupplierWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sélectionner un fournisseur"
+        Height="520" Width="750"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F7FAFC">
+
+    <Window.Resources>
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#3182CE"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Opacity" Value="0.7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border Margin="10" Background="White" CornerRadius="8">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.08"
+                              BlurRadius="12" ShadowDepth="2"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+           
+            <Border Grid.Row="0" Background="#3182CE"
+                    CornerRadius="8,8,0,0" Padding="16">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="40" Height="40" Background="#2B6CB0"
+                            CornerRadius="20" Margin="0,0,10,0">
+                        <TextBlock Text="🏭" FontSize="22"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel>
+                        <TextBlock Text="Sélectionner un fournisseur"
+                                   FontSize="18" FontWeight="Bold"
+                                   Foreground="White"/>
+                        <TextBlock Text="Choisissez un fournisseur dans la liste."
+                                   FontSize="12" Foreground="#BEE3F8"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+           
+            <Border Grid.Row="1" Background="#F7FAFC"
+                    BorderBrush="#E2E8F0" BorderThickness="0,0,0,1"
+                    Padding="12,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <TextBox x:Name="SearchTextBox"
+                                 Style="{StaticResource ModernTextBox}"
+                                 Padding="28,4,8,4"/>
+                        <TextBlock Text="🔍" FontSize="14"
+                                   Foreground="#A0AEC0"
+                                   IsHitTestVisible="False"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0"/>
+                    </Grid>
+
+                    <Button Content="Rechercher"
+                            Grid.Column="1" Margin="8,0,0,0"
+                            Width="110" Background="#3182CE"
+                            Click="SearchButton_Click"
+                            Style="{StaticResource ModernButton}"/>
+                </Grid>
+            </Border>
+
+            
+            <DataGrid x:Name="SuppliersGrid"
+                      Grid.Row="2" Margin="12"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      SelectionMode="Single"
+                      BorderThickness="0"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#E2E8F0"
+                      AlternatingRowBackground="#F7FAFC"
+                      RowHeight="32"
+                      MouseDoubleClick="SuppliersGrid_MouseDoubleClick">
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#2D3748"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Padding" Value="10,6"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="FontSize" Value="12.5"/>
+                        <Setter Property="Background" Value="White"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#EBF8FF"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#BEE3F8"/>
+                                <Setter Property="Foreground" Value="#1A365D"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Code" Binding="{Binding CodeFournisseur}" Width="80"/>
+                    <DataGridTextColumn Header="Désignation" Binding="{Binding Designation}" Width="200"/>
+                    <DataGridTextColumn Header="Activité" Binding="{Binding Activite}" Width="140"/>
+                    <DataGridTextColumn Header="Adresse" Binding="{Binding Adresse}" Width="200"/>
+                    <DataGridTextColumn Header="Dette" Binding="{Binding Dette}" Width="90"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            
+            <Border Grid.Row="3" Background="#F7FAFC"
+                    BorderBrush="#E2E8F0" BorderThickness="1,1,0,0"
+                    CornerRadius="0,0,8,8" Padding="12">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Annuler"
+                            Width="100" Margin="0,0,8,0"
+                            Background="#A0AEC0"
+                            Click="CancelButton_Click"
+                            Style="{StaticResource ModernButton}"/>
+                    <Button Content="Sélectionner"
+                            Width="120"
+                            Background="#38A169"
+                            Click="SelectButton_Click"
+                            Style="{StaticResource ModernButton}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

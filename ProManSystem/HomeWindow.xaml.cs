@@ -33,7 +33,7 @@ namespace ProManSystem
             ProductsButton.Background = Brushes.Transparent;
             SuppliersButton.Background = Brushes.Transparent;
             RawMaterialsButton.Background = Brushes.Transparent;
-
+            PurchaseInvoicesButton.Background = Brushes.Transparent;
 
             activeButton.Background = new SolidColorBrush(Color.FromRgb(55, 71, 79));
         }
@@ -43,6 +43,13 @@ namespace ProManSystem
             SetActiveButton(RawMaterialsButton);
             MainContent.Content = new RawMaterialsEditorView();
         }
+
+        private void PurchaseInvoicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(PurchaseInvoicesButton);
+            MainContent.Content = new PurchaseInvoicesView();
+        }
+
 
     }
 }
