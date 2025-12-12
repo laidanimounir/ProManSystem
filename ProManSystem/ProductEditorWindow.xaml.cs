@@ -45,7 +45,7 @@ namespace ProManSystem.Views
             ProfitLabel.Text = (p.PrixVente - p.CoutProduction).ToString("0.00");
         }
 
-
+       
 
         private string GenerateNextProductCode()
         {
@@ -137,6 +137,7 @@ namespace ProManSystem.Views
                 };
                 _db.Products.Add(product);
 
+            
                 if (string.IsNullOrWhiteSpace(CodeTextBox.Text))
                     CodeTextBox.Text = GenerateNextProductCode();
             }
@@ -156,7 +157,7 @@ namespace ProManSystem.Views
             product.CoutProduction = CalculateProductionCost(product.Id);
             product.Marge = product.PrixVente - product.CoutProduction;
 
-           
+
             _db.SaveChanges();
 
             DialogResult = true;
