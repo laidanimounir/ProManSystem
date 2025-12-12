@@ -56,5 +56,12 @@ namespace ProManSystem
             SetActiveButton(ProductsButton);
             MainContent.Content = new ProductsView();  
         }
+
+        private void SalesInvoicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(SalesInvoicesButton);
+            MainContent.Content = new SalesInvoicesView();
+        }
+
     }
 }

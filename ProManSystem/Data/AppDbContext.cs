@@ -16,6 +16,9 @@ namespace ProManSystem.Data
 
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductRecipe> ProductRecipes { get; set; }
+        public DbSet<SalesInvoice> SalesInvoices { get; set; }
+        public DbSet<SalesInvoiceLine> SalesInvoiceLines { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

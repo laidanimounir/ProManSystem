@@ -1,0 +1,364 @@
+﻿<UserControl x:Class="ProManSystem.Views.SalesInvoicesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#3182CE"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.9"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Opacity" Value="0.75"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="15">
+        <TabControl>
+
+            <TabItem Header="Nouvelle facture de vente" FontSize="13" FontWeight="SemiBold">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="15">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="White"
+                                BorderBrush="#E2E8F0" BorderThickness="1"
+                                CornerRadius="8" Padding="18">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" Opacity="0.06"
+                                                  BlurRadius="10" ShadowDepth="2"/>
+                            </Border.Effect>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Margin="0,0,25,0">
+                                    <TextBlock Text="🧾 Nouvelle facture de vente"
+                                               FontSize="18" FontWeight="Bold"
+                                               Foreground="#2D3748" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Sélectionnez un client, puis ajoutez les lignes de produits vendus."
+                                               FontSize="12" Foreground="#A0AEC0" Margin="0,0,0,12"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="N° facture :" Width="90"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBox x:Name="NumeroFactureTextBox"
+                                                 Width="120" IsReadOnly="True"
+                                                 Background="#EDF2F7"
+                                                 Style="{StaticResource ModernTextBox}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="Date :" Width="90"
+                                                   VerticalAlignment="Center"/>
+                                        <DatePicker x:Name="DateFacturePicker"
+                                                    Width="140"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Client :" Margin="0,0,0,4"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBox x:Name="CustomerTextBox"
+                                                 Grid.Column="0"
+                                                 IsReadOnly="True"
+                                                 Background="#EDF2F7"
+                                                 Style="{StaticResource ModernTextBox}"/>
+
+                                        <Button Content="Choisir..."
+                                                Grid.Column="1"
+                                                Width="110" Margin="8,0,0,0"
+                                                Background="#3182CE"
+                                                Click="PickCustomerButton_Click"
+                                                Style="{StaticResource ModernButton}"/>
+                                    </Grid>
+
+                                    <TextBlock Text="TVA (%) :" Margin="0,10,0,4"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ComboBox x:Name="TvaComboBox"
+                                                  Grid.Column="0"
+                                                  IsEditable="True"
+                                                  Style="{StaticResource ModernComboBox}"/>
+
+                                        <Button Content="💾"
+                                                ToolTip="Enregistrer ce taux comme valeur par défaut"
+                                                Grid.Column="1"
+                                                Width="36" Margin="8,0,0,0"
+                                                Background="#38A169"
+                                                Click="SaveTvaButton_Click"
+                                                Style="{StaticResource ModernButton}"/>
+                                    </Grid>
+                                    <TextBlock Text="يمكنك اختيار 19 أو 9 أو كتابة نسبة جديدة، ثم حفظها."
+                                               FontSize="11" Foreground="#A0AEC0"
+                                               Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="2" Background="White"
+                                BorderBrush="#E2E8F0" BorderThickness="1"
+                                CornerRadius="8" Padding="16">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" Opacity="0.06"
+                                                  BlurRadius="10" ShadowDepth="2"/>
+                            </Border.Effect>
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="10"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <Button Content="➕ Ajouter une ligne"
+                                            Width="170"
+                                            Background="#38A169"
+                                            Click="AddLineButton_Click"
+                                            Style="{StaticResource ModernButton}"/>
+                                </StackPanel>
+
+                                <DataGrid x:Name="LinesGrid"
+                                          Grid.Row="2" Margin="0,5,0,10"
+                                          AutoGenerateColumns="False"
+                                          IsReadOnly="True"
+                                          CanUserAddRows="False"
+                                          SelectionMode="Single"
+                                          BorderThickness="0"
+                                          GridLinesVisibility="Horizontal"
+                                          HorizontalGridLinesBrush="#E2E8F0"
+                                          AlternatingRowBackground="#F7FAFC"
+                                          RowHeight="32">
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#2D3748"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="FontSize" Value="13"/>
+                                            <Setter Property="Padding" Value="10,6"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
+
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Code" Binding="{Binding Product.CodeProduit}" Width="80"/>
+                                        <DataGridTextColumn Header="Produit" Binding="{Binding Product.Nom}" Width="200"/>
+                                        <DataGridTextColumn Header="Quantité" Binding="{Binding Quantite}" Width="90"/>
+                                        <DataGridTextColumn Header="Prix U.(DA)" Binding="{Binding PrixUnitaire}" Width="90"/>
+                                        <DataGridTextColumn Header="Total (DA)" Binding="{Binding MontantLigne}" Width="100"/>
+                                        <DataGridTemplateColumn Header="" Width="50">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="❌" Width="32" Height="24"
+                                                            Background="#E53E3E" Foreground="White"
+                                                            Click="DeleteLineButton_Click"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <Grid Grid.Row="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="260"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Récapitulatif"
+                                                   FontWeight="Bold"
+                                                   Margin="0,0,0,6"/>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="Montant HT :" Width="110"/>
+                                            <TextBox x:Name="MontantHTTextBox"
+                                                     Width="130" IsReadOnly="True"
+                                                     Background="#EDF2F7"
+                                                     Style="{StaticResource ModernTextBox}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="TVA :" Width="110"/>
+                                            <TextBox x:Name="MontantTVATextBox"
+                                                     Width="130" IsReadOnly="True"
+                                                     Background="#EDF2F7"
+                                                     Style="{StaticResource ModernTextBox}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                            <TextBlock Text="Montant TTC :" Width="110"
+                                                       FontWeight="Bold"/>
+                                            <TextBox x:Name="MontantTTCTextBox"
+                                                     Width="130" IsReadOnly="True"
+                                                     Background="#EDF2F7"
+                                                     FontWeight="Bold"
+                                                     Style="{StaticResource ModernTextBox}"/>
+                                        </StackPanel>
+
+                                        <Separator Margin="0,6,0,6"/>
+
+                                        <StackPanel Orientation="Horizontal"
+                                                    Margin="0,12,0,0"
+                                                    HorizontalAlignment="Right">
+                                            <Button Content="Enregistrer"
+                                                    Width="130"
+                                                    Background="#38A169"
+                                                    Click="SaveInvoiceButton_Click"
+                                                    Style="{StaticResource ModernButton}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Historique" FontSize="13" FontWeight="SemiBold">
+                <Grid Margin="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="White"
+                            BorderBrush="#E2E8F0" BorderThickness="1"
+                            CornerRadius="8" Padding="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="HistorySearchTextBox"
+                                     Height="30" Margin="0,0,8,0"
+                                     Style="{StaticResource ModernTextBox}"/>
+                            <Button Content="Rechercher"
+                                    Grid.Column="1"
+                                    Width="110"
+                                    Background="#3182CE"
+                                    Click="HistorySearchButton_Click"
+                                    Style="{StaticResource ModernButton}"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="2" Background="White"
+                            BorderBrush="#E2E8F0" BorderThickness="1"
+                            CornerRadius="8" Padding="10">
+                        <DataGrid x:Name="HistoryGrid"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  SelectionMode="Single"
+                                  BorderThickness="0"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E2E8F0"
+                                  AlternatingRowBackground="#F7FAFC"
+                                  RowHeight="32"
+                                  SelectionChanged="HistoryGrid_SelectionChanged">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#2D3748"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="Padding" Value="10,6"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="N°" Binding="{Binding NumeroFacture}" Width="90"/>
+                                <DataGridTextColumn Header="Client" Binding="{Binding Customer.NomComplet}" Width="200"/>
+                                <DataGridTextColumn Header="Date" Binding="{Binding DateFacture}" Width="110"/>
+                                <DataGridTextColumn Header="Montant TTC" Binding="{Binding MontantTTC}" Width="120"/>
+                                <DataGridTextColumn Header="Payé" Binding="{Binding MontantPaye}" Width="100"/>
+                                <DataGridTextColumn Header="Reste" Binding="{Binding Reste}" Width="100"/>
+                                <DataGridTemplateColumn Header="Statut" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="غير مدفوعة"/>
+                                                        <Setter Property="Foreground" Value="#C53030"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding EstPayee}" Value="True">
+                                                                <Setter Property="Text" Value="مدفوعة"/>
+                                                                <Setter Property="Foreground" Value="#2F855A"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

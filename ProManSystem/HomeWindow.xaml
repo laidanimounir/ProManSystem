@@ -185,6 +185,20 @@
                     </StackPanel>
                 </Button>
 
+                <Button x:Name="SalesInvoicesButton"
+        Style="{StaticResource NavButton}"
+        Click="SalesInvoicesButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="32" Height="32" Background="Transparent"
+                CornerRadius="6" Margin="0,0,12,0">
+                            <TextBlock Text="🧾" FontSize="16"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Factures vente" VerticalAlignment="Center" FontSize="14"/>
+                    </StackPanel>
+                </Button>
+
+
                 <Border Height="1" Background="#2D3748" Margin="20,20,20,20"/>
 
                 <TextBlock Text="AUTRES"
