@@ -38,7 +38,14 @@ namespace ProManSystem.Models
         public decimal? CA_TTC { get; set; }
 
         public bool EstRadie { get; set; }
-        public DateTime? DateRadiation { get; set; }  
+        public DateTime? DateRadiation { get; set; }
+        [MaxLength(60)]
+        public string? Categorie { get; set; }
+
+        [MaxLength(260)]
+        public string? PhotoPath { get; set; }
+
+        public DateTime DateCreation { get; set; }
 
     }
 }

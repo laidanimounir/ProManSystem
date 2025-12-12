@@ -185,7 +185,21 @@
                     </Grid>
                     <Border Height="20"/>
 
-                    
+                    <TextBlock Text="🏷 CATÉGORIE" Style="{StaticResource SectionHeader}"/>
+
+                    <TextBlock Text="Catégorie :" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="CategorieComboBox"
+          Style="{StaticResource ModernComboBox}"
+          IsEditable="True" Margin="0,0,0,12">
+                        <ComboBoxItem Content="Nouveau"/>
+                        <ComboBoxItem Content="Fidèle"/>
+                        <ComboBoxItem Content="Inactif"/>
+                    </ComboBox>
+
+                    <Border Height="20"/>
+
+
+
                     <TextBlock Text="💰 INFORMATIONS FINANCIÈRES" Style="{StaticResource SectionHeader}"/>
 
                     

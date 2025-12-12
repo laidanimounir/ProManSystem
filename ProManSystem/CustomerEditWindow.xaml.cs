@@ -26,7 +26,7 @@ namespace ProManSystem.Views
             MatriculeTextBox.Text = _customer.MatriculeFiscal;
             NumeroIdTextBox.Text = _customer.NumeroIdentification;
 
-            
+
             if (_customer.TypeIdentification == "Article")
                 TypeIdComboBox.SelectedIndex = 0;
             else if (_customer.TypeIdentification == "BP")
@@ -34,12 +34,12 @@ namespace ProManSystem.Views
             else
                 TypeIdComboBox.Text = _customer.TypeIdentification;
 
-           
+
             CAHTTextBox.Text = _customer.CA_HT?.ToString("F2") ?? "0.00";
             TVATextBox.Text = _customer.TauxTVA?.ToString("F2") ?? "0.00";
             CATTCTextBox.Text = _customer.CA_TTC?.ToString("F2") ?? "0.00";
 
-            
+
             bool isRadie = _customer.EstRadie;
             RadieCheckBox.IsChecked = isRadie;
             RadieCheckBox2.IsChecked = isRadie;
@@ -49,23 +49,30 @@ namespace ProManSystem.Views
 
             UpdateRadieUI(isRadie);
 
-            
+
+            CategorieComboBox.Text = _customer.Categorie;
+
+
             HeaderSubtitle.Text = $"Code: {_customer.CodeClient} - {_customer.NomComplet}";
         }
+
 
         private void RadieCheckBox_CheckedChanged(object sender, RoutedEventArgs e)
         {
             bool isChecked = RadieCheckBox.IsChecked == true || RadieCheckBox2.IsChecked == true;
 
-           
             RadieCheckBox.IsChecked = isChecked;
             RadieCheckBox2.IsChecked = isChecked;
 
             UpdateRadieUI(isChecked);
 
-          
             if (isChecked && !DateRadiationPicker.SelectedDate.HasValue)
                 DateRadiationPicker.SelectedDate = DateTime.Now;
+
+           
+            if (isChecked && string.IsNullOrWhiteSpace(CategorieComboBox.Text))
+                CategorieComboBox.Text = "Inactif";
+
         }
 
         private void UpdateRadieUI(bool isRadie)
@@ -102,14 +109,20 @@ namespace ProManSystem.Views
                 _customer.NumeroIdentification = NumeroIdTextBox.Text?.Trim();
 
                 var typeId = (TypeIdComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                             ?? TypeIdComboBox.Text;
+              ?? TypeIdComboBox.Text;
                 _customer.TypeIdentification = typeId;
 
-                _customer.EstRadie = RadieCheckBox.IsChecked == true;
-                _customer.DateRadiation = DateRadiationPicker.SelectedDate;
+                
+                _customer.Categorie = CategorieComboBox.Text?.Trim();
+
+                
+                bool isRadie = RadieCheckBox.IsChecked == true || RadieCheckBox2.IsChecked == true;
+                _customer.EstRadie = isRadie;
+                _customer.DateRadiation = isRadie ? DateRadiationPicker.SelectedDate : null;
 
                 this.DialogResult = true;
                 this.Close();
+
             }
             catch (Exception ex)
             {

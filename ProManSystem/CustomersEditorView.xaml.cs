@@ -118,8 +118,12 @@ namespace ProManSystem.Views
             MatriculeTextBox.Text = "";
             TypeIdComboBox.SelectedIndex = 0;
             NumeroIdTextBox.Text = "";
+            CategorieComboBox.Text = "";
+            DateCreationTextBox.Text = DateTime.Now.ToString("dd/MM/yyyy");
             _selectedCustomer = null;
         }
+
+
 
         private string GenerateCustomerCode()
         {
@@ -178,10 +182,15 @@ namespace ProManSystem.Views
                     MatriculeFiscal = MatriculeTextBox.Text?.Trim(),
                     TypeIdentification = typeId,
                     NumeroIdentification = NumeroIdTextBox.Text?.Trim(),
+                    Categorie = CategorieComboBox.Text?.Trim(),
+                    PhotoPath = null, 
+                    DateCreation = DateTime.Now,
                     CA_HT = null,
                     TauxTVA = null,
                     CA_TTC = null
                 };
+
+
 
                 _db.Customers.Add(customer);
                 _db.SaveChanges();
@@ -214,6 +223,10 @@ namespace ProManSystem.Views
             MatriculeTextBox.Text = _selectedCustomer.MatriculeFiscal;
             TypeIdComboBox.Text = _selectedCustomer.TypeIdentification;
             NumeroIdTextBox.Text = _selectedCustomer.NumeroIdentification;
+            CategorieComboBox.Text = _selectedCustomer.Categorie;
+            DateCreationTextBox.Text = _selectedCustomer.DateCreation.ToString("dd/MM/yyyy");
+
+
         }
     }
 }
