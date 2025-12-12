@@ -228,5 +228,24 @@ namespace ProManSystem.Views
 
 
         }
+
+        private void OpenCardButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = ManageCustomersGrid.SelectedItem as Customer;
+            if (selected == null)
+            {
+                MessageBox.Show("Sélectionnez un client pour afficher sa carte.",
+                    "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var cardWindow = new CustomerCardWindow(selected)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            cardWindow.ShowDialog();
+        }
+
     }
+
 }
