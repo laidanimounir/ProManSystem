@@ -6,11 +6,18 @@ namespace ProManSystem
 {
     public partial class HomeWindow : Window
     {
+        private bool _isFullScreen = false;
+        private WindowState _previousWindowState;
+        private WindowStyle _previousWindowStyle;
+
         public HomeWindow()
         {
             InitializeComponent();
 
-           
+
+            TodayTextBlock.Text = DateTime.Today.ToString("dd/MM/yyyy");
+            MainContent.Content = new DashboardView();
+            SetActiveButton(DashboardButton);
             MainContent.Content = new DashboardView();
             SetActiveButton(DashboardButton);
         }
@@ -82,5 +89,47 @@ namespace ProManSystem
             SetActiveButton(SalesInvoicesButton);
             MainContent.Content = new SalesInvoicesView();
         }
+
+        private void QuickNewSalesInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(SalesInvoicesButton);
+            MainContent.Content = new SalesInvoicesView();
+        }
+
+        private void QuickProducts_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(ProductsButton);
+            MainContent.Content = new ProductsView();
+        }
+
+        private void QuickClients_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(ClientsButton);
+            MainContent.Content = new ClientsView();
+        }
+
+        private void FullScreenButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_isFullScreen)
+            {
+               
+                _previousWindowState = this.WindowState;
+                _previousWindowStyle = this.WindowStyle;
+
+                
+                this.WindowStyle = WindowStyle.None;
+                this.WindowState = WindowState.Maximized;
+                _isFullScreen = true;
+            }
+            else
+            {
+                
+                this.WindowStyle = _previousWindowStyle;
+                this.WindowState = _previousWindowState;
+                _isFullScreen = false;
+            }
+        }
+
+
     }
 }
