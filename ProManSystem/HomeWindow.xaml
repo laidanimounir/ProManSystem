@@ -115,7 +115,20 @@
                            Foreground="#718096" FontSize="11" FontWeight="Bold"
                            Margin="20,0,0,15"/>
 
-              
+                <Button x:Name="DashboardButton"
+        Style="{StaticResource NavButtonActive}"
+        Click="DashboardButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="32" Height="32" Background="#3182CE"
+                CornerRadius="6" Margin="0,0,12,0">
+                            <TextBlock Text="📊" FontSize="16"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="14"/>
+                    </StackPanel>
+                </Button>
+
+
                 <Button x:Name="ClientsButton"
                         Style="{StaticResource NavButtonActive}"
                         Click="ClientsButton_Click">

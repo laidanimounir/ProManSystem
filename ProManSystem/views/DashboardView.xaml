@@ -1,0 +1,181 @@
+﻿<UserControl x:Class="ProManSystem.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="CardBorder" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- العنوان -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="📊" FontSize="22" Margin="0,0,8,0"/>
+            <StackPanel>
+                <TextBlock Text="Tableau de bord"
+                           FontSize="20" FontWeight="Bold" Foreground="#1A202C"/>
+                <TextBlock Text="Vue globale des ventes, achats et stock."
+                           FontSize="12" Foreground="#718096"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Border Style="{StaticResource CardBorder}" Width="220">
+                <StackPanel>
+                    <TextBlock Text="Ventes du mois (TTC)" Foreground="#718096" FontSize="12"/>
+                    <TextBlock x:Name="SalesMonthTtcText"
+                               FontSize="20" FontWeight="Bold" Foreground="#2B6CB0" Margin="0,4,0,0"/>
+                    <TextBlock Text="Total factures vente ce mois"
+                               FontSize="11" Foreground="#A0AEC0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorder}" Width="220">
+                <StackPanel>
+                    <TextBlock Text="Achats du mois (TTC)" Foreground="#718096" FontSize="12"/>
+                    <TextBlock x:Name="PurchasesMonthTtcText"
+                               FontSize="20" FontWeight="Bold" Foreground="#2F855A" Margin="0,4,0,0"/>
+                    <TextBlock Text="Total factures achat ce mois"
+                               FontSize="11" Foreground="#A0AEC0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorder}" Width="220">
+                <StackPanel>
+                    <TextBlock Text="Factures vente" Foreground="#718096" FontSize="12"/>
+                    <TextBlock x:Name="SalesInvoicesCountText"
+                               FontSize="20" FontWeight="Bold" Foreground="#DD6B20" Margin="0,4,0,0"/>
+                    <TextBlock Text="Nombre de factures vente ce mois"
+                               FontSize="11" Foreground="#A0AEC0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardBorder}" Width="220">
+                <StackPanel>
+                    <TextBlock Text="Produits stock bas" Foreground="#718096" FontSize="12"/>
+                    <TextBlock x:Name="LowStockProductsCountText"
+                               FontSize="20" FontWeight="Bold" Foreground="#E53E3E" Margin="0,4,0,0"/>
+                    <TextBlock Text="StockActuel ≤ StockMin"
+                               FontSize="11" Foreground="#A0AEC0"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+      
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                <TextBlock Text="Dernières factures de vente"
+                           Style="{StaticResource SectionTitle}"/>
+                <Border Style="{StaticResource CardBorder}" Margin="0">
+                    <DataGrid x:Name="LastSalesGrid"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              SelectionMode="Single"
+                              BorderThickness="0"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#E2E8F0"
+                              AlternatingRowBackground="#F7FAFC"
+                              RowHeight="30">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#2D3748"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Padding" Value="8,4"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="N°" Binding="{Binding NumeroFacture}" Width="80"/>
+                            <DataGridTextColumn Header="Client" Binding="{Binding Customer.NomComplet}" Width="200"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding DateFacture}" Width="130"/>
+                            <DataGridTextColumn Header="Montant TTC" Binding="{Binding MontantTTC}" Width="110"/>
+                            <DataGridTemplateColumn Header="Statut" Width="90">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock FontWeight="SemiBold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="غير مدفوعة"/>
+                                                    <Setter Property="Foreground" Value="#C53030"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding EstPayee}" Value="True">
+                                                            <Setter Property="Text" Value="مدفوعة"/>
+                                                            <Setter Property="Foreground" Value="#2F855A"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </StackPanel>
+
+            
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Produits à stock faible"
+                           Style="{StaticResource SectionTitle}"/>
+                <Border Style="{StaticResource CardBorder}" Margin="0">
+                    <DataGrid x:Name="LowStockGrid"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              SelectionMode="Single"
+                              BorderThickness="0"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#E2E8F0"
+                              AlternatingRowBackground="#FFF5F5"
+                              RowHeight="28">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#742A2A"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="Padding" Value="6,3"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Code" Binding="{Binding CodeProduit}" Width="70"/>
+                            <DataGridTextColumn Header="Produit" Binding="{Binding Nom}" Width="150"/>
+                            <DataGridTextColumn Header="Stock" Binding="{Binding StockActuel}" Width="60"/>
+                            <DataGridTextColumn Header="Min" Binding="{Binding StockMin}" Width="60"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
