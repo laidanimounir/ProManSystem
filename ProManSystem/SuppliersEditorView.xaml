@@ -413,6 +413,10 @@
                                         Background="#FF6F00"
                                         Click="OpenEditDialogButton_Click"
                                         Style="{StaticResource ModernButton}"/>
+                                <Button Content="🖨 Carte" Width="122"
+            Background="#4CAF50"
+            Click="OpenCardButton_Click"
+            Style="{StaticResource ModernButton}"/>
                             </StackPanel>
                         </Grid>
                     </Border>

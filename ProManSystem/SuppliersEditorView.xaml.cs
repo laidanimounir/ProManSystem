@@ -216,5 +216,31 @@ namespace ProManSystem.Views
             TypeIdComboBox.Text = _selectedSupplier.TypeIdentification;
             NumeroIdTextBox.Text = _selectedSupplier.NumeroIdentification;
         }
+
+        private void OpenCardButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = ManageSuppliersGrid.SelectedItem as Supplier;
+            if (selected == null)
+            {
+                MessageBox.Show("Sélectionnez un fournisseur pour afficher sa carte.",
+                    "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                var cardWindow = new SupplierCardWindow(selected)
+                {
+                    Owner = Application.Current.MainWindow
+                };
+                cardWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de l'ouverture de la carte : " + ex.Message,
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
     }
 }
