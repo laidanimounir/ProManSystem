@@ -22,9 +22,54 @@ namespace ProManSystem.Views
             InitTvaList();
             LoadHistory();
             PrepareNewInvoice();
+            UpdateStatistics(); // ← جديد
 
             LinesGrid.ItemsSource = _lines;
             HistoryGrid.ItemsSource = _history;
+        }
+
+        /// <summary>
+        /// تحديث الإحصائيات الشهرية
+        /// </summary>
+        private void UpdateStatistics()
+        {
+            try
+            {
+                var firstDayOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                // إجمالي المبيعات هذا الشهر
+                var monthSales = _db.SalesInvoices
+                    .Where(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth)
+                    .Sum(f => (decimal?)f.MontantTTC) ?? 0m;
+
+                // عدد الفواتير هذا الشهر
+                var invoiceCount = _db.SalesInvoices
+                    .Count(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth);
+
+                // الربح التقديري (يمكن تحسينه بناءً على منطق الربح الفعلي)
+                var estimatedProfit = _db.SalesInvoices
+                    .Where(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth)
+                    .SelectMany(f => f.Lignes)
+                    .Sum(l => (decimal?)(l.MontantLigne * 0.2m)) ?? 0m; // افتراض 20% هامش ربح
+
+                // تحديث الواجهة
+                if (StatsMonthSales != null)
+                    StatsMonthSales.Text = $"{monthSales:N2} DA";
+
+                if (StatsProfit != null)
+                    StatsProfit.Text = $"{estimatedProfit:N2} DA";
+
+                if (StatsInvoiceCount != null)
+                    StatsInvoiceCount.Text = invoiceCount.ToString();
+            }
+            catch (Exception ex)
+            {
+                // في حالة الخطأ، عرض 0
+                if (StatsMonthSales != null) StatsMonthSales.Text = "0.00 DA";
+                if (StatsProfit != null) StatsProfit.Text = "0.00 DA";
+                if (StatsInvoiceCount != null) StatsInvoiceCount.Text = "0";
+            }
         }
 
         private void InitTvaList()
@@ -201,21 +246,47 @@ namespace ProManSystem.Views
 
                 _db.SalesInvoices.Add(invoice);
 
-              
+                // تحديث مخزون المنتجات
                 foreach (var l in invoice.Lignes)
                 {
                     var product = _db.Products.First(p => p.Id == l.ProductId);
                     product.StockActuel -= l.Quantite;
                 }
 
-               
+                // تحديث CA للزبون
                 var customer = _db.Customers.First(c => c.Id == invoice.CustomerId);
                 customer.CA_TTC = (customer.CA_TTC ?? 0) + invoice.MontantTTC;
 
                 _db.SaveChanges();
 
-                _history.Insert(0, invoice);
-                HistoryGrid.Items.Refresh();
+                // إعادة تحميل الفاتورة مع البيانات المرتبطة
+                var savedInvoice = _db.SalesInvoices
+                    .Where(f => f.Id == invoice.Id)
+                    .Select(f => new SalesInvoice
+                    {
+                        Id = f.Id,
+                        NumeroFacture = f.NumeroFacture,
+                        CustomerId = f.CustomerId,
+                        DateFacture = f.DateFacture,
+                        MontantHT = f.MontantHT,
+                        TauxTVA = f.TauxTVA,
+                        MontantTVA = f.MontantTVA,
+                        MontantTTC = f.MontantTTC,
+                        MontantPaye = f.MontantPaye,
+                        Reste = f.Reste,
+                        EstPayee = f.EstPayee,
+                        Customer = f.Customer
+                    })
+                    .FirstOrDefault();
+
+                if (savedInvoice != null)
+                {
+                    _history.Insert(0, savedInvoice);
+                    HistoryGrid.Items.Refresh();
+                }
+
+                // تحديث الإحصائيات
+                UpdateStatistics();
 
                 MessageBox.Show("تم حفظ فاتورة البيع بنجاح.",
                     "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -231,17 +302,45 @@ namespace ProManSystem.Views
 
         private void LoadHistory()
         {
-            _history = new ObservableCollection<SalesInvoice>(
-                _db.SalesInvoices
-                   .OrderByDescending(f => f.DateFacture)
-                   .Take(100)
-                   .ToList()
-            );
+            try
+            {
+                var invoices = _db.SalesInvoices
+                    .OrderByDescending(f => f.DateFacture)
+                    .Take(100)
+                    .Select(f => new SalesInvoice
+                    {
+                        Id = f.Id,
+                        NumeroFacture = f.NumeroFacture,
+                        CustomerId = f.CustomerId,
+                        DateFacture = f.DateFacture,
+                        MontantHT = f.MontantHT,
+                        TauxTVA = f.TauxTVA,
+                        MontantTVA = f.MontantTVA,
+                        MontantTTC = f.MontantTTC,
+                        MontantPaye = f.MontantPaye,
+                        Reste = f.Reste,
+                        EstPayee = f.EstPayee,
+                        Customer = f.Customer
+                    })
+                    .ToList();
+
+                _history = new ObservableCollection<SalesInvoice>(invoices);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors du chargement de l'historique : " + ex.Message,
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                _history = new ObservableCollection<SalesInvoice>();
+            }
         }
 
         private void HistorySearchButton_Click(object sender, RoutedEventArgs e)
         {
             string term = (HistorySearchTextBox.Text ?? "").Trim();
+
+            // إزالة النص التوضيحي
+            if (term.StartsWith("🔍"))
+                term = term.Replace("🔍 Rechercher par N°, client, date...", "").Trim();
 
             if (string.IsNullOrWhiteSpace(term))
             {
@@ -261,7 +360,7 @@ namespace ProManSystem.Views
 
         private void HistoryGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            // يمكن إضافة منطق لعرض تفاصيل الفاتورة المحددة
         }
     }
 }
