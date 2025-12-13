@@ -385,7 +385,7 @@ namespace ProManSystem.Views
 
         private void HistoryGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // يمكن إضافة منطق لعرض تفاصيل الفاتورة المحددة
+            // يمكن إضافة منطق لعرض تفاصيل الفاتورة المحدد
         }
     }
 }
