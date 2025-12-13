@@ -41,7 +41,6 @@ namespace ProManSystem.Views
             _products = new ObservableCollection<Product>(list);
             ProductsGrid.ItemsSource = _products;
 
-          
             UpdateProductDetails(null);
         }
 
@@ -118,8 +117,6 @@ namespace ProManSystem.Views
             string term = (SearchTextBox.Text ?? string.Empty).Trim();
             LoadProducts(string.IsNullOrWhiteSpace(term) ? null : term);
         }
-
-        // ===== منطق الإنتاج =====
 
         private void ProduceProductButton_Click(object sender, RoutedEventArgs e)
         {
@@ -202,7 +199,6 @@ namespace ProManSystem.Views
             _db.SaveChanges();
         }
 
-
         private void ProductsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var product = ProductsGrid.SelectedItem as Product;
@@ -236,6 +232,37 @@ namespace ProManSystem.Views
             DetailDescriptionTextBlock.Text = string.IsNullOrWhiteSpace(p.Description)
                 ? "-"
                 : p.Description;
+        }
+
+        // ==== الأحداث الجديدة المطلوبة ====
+
+        private void FilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ProductsGrid == null || ProductsGrid.ItemsSource == null)
+                return;
+        }
+
+        private void ProductsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            // يمكن إضافة تلوين الصفوف لاحقاً
+        }
+
+        private void ExportReportButton_Click(object sender, RoutedEventArgs e)
+        {
+            var product = ProductsGrid.SelectedItem as Product;
+
+            if (product == null)
+            {
+                MessageBox.Show("الرجاء تحديد منتج أولاً.", "تنبيه",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            MessageBox.Show(
+                $"سيتم تصدير تقرير المنتج '{product.Nom}' إلى PDF\n\n(سيتم تطبيقه لاحقاً)",
+                "تصدير PDF",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
     }
 }
