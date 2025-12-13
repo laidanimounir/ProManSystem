@@ -22,22 +22,65 @@ namespace ProManSystem.Views
             InitTvaList();
             LoadHistory();
             PrepareNewInvoice();
+            UpdateStatistics(); // ← جديد
 
             LinesGrid.ItemsSource = _lines;
             HistoryGrid.ItemsSource = _history;
         }
 
-        
+        /// <summary>
+        /// تحديث الإحصائيات الشهرية للمشتريات
+        /// </summary>
+        private void UpdateStatistics()
+        {
+            try
+            {
+                var firstDayOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                // إجمالي المشتريات هذا الشهر
+                var monthPurchases = _db.PurchaseInvoices
+                    .Where(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth)
+                    .Sum(f => (decimal?)f.MontantTTC) ?? 0m;
+
+                // آخر طلب شراء
+                var lastOrder = _db.PurchaseInvoices
+                    .Where(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth)
+                    .OrderByDescending(f => f.DateFacture)
+                    .Select(f => (decimal?)f.MontantTTC)
+                    .FirstOrDefault() ?? 0m;
+
+                // عدد الفواتير هذا الشهر
+                var invoiceCount = _db.PurchaseInvoices
+                    .Count(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth);
+
+                // تحديث الواجهة
+                if (StatsMonthPurchases != null)
+                    StatsMonthPurchases.Text = $"{monthPurchases:N2} DA";
+
+                if (StatsLastOrder != null)
+                    StatsLastOrder.Text = $"{lastOrder:N2} DA";
+
+                if (StatsInvoiceCount != null)
+                    StatsInvoiceCount.Text = invoiceCount.ToString();
+            }
+            catch (Exception ex)
+            {
+                // في حالة الخطأ، عرض 0
+                if (StatsMonthPurchases != null) StatsMonthPurchases.Text = "0.00 DA";
+                if (StatsLastOrder != null) StatsLastOrder.Text = "0.00 DA";
+                if (StatsInvoiceCount != null) StatsInvoiceCount.Text = "0";
+            }
+        }
 
         private void InitTvaList()
         {
-           
             var defaultRates = new[] { 19m, 9m, 0m };
 
             foreach (var r in defaultRates)
                 TvaComboBox.Items.Add(r.ToString("0.##"));
 
-            TvaComboBox.Text = "19"; 
+            TvaComboBox.Text = "19";
         }
 
         private decimal GetTvaRate()
@@ -59,8 +102,6 @@ namespace ProManSystem.Views
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-      
-
         private void PrepareNewInvoice()
         {
             NumeroFactureTextBox.Text = GenerateInvoiceNumber();
@@ -73,8 +114,6 @@ namespace ProManSystem.Views
             MontantHTTextBox.Text = "0.00";
             MontantTVATextBox.Text = "0.00";
             MontantTTCTextBox.Text = "0.00";
-           
-           
         }
 
         private string GenerateInvoiceNumber()
@@ -103,8 +142,6 @@ namespace ProManSystem.Views
             }
         }
 
-       
-
         private void PickSupplierButton_Click(object sender, RoutedEventArgs e)
         {
             var win = new SupplierPickerWindow
@@ -119,11 +156,9 @@ namespace ProManSystem.Views
             }
         }
 
-      
-
         private void AddLineButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new PurchaseLineDialog(); 
+            var dialog = new PurchaseLineDialog();
             dialog.Owner = Application.Current.MainWindow;
 
             if (dialog.ShowDialog() == true && dialog.CreatedLine != null)
@@ -152,14 +187,7 @@ namespace ProManSystem.Views
             MontantHTTextBox.Text = ht.ToString("0.00");
             MontantTVATextBox.Text = tva.ToString("0.00");
             MontantTTCTextBox.Text = ttc.ToString("0.00");
-
-         
-            
         }
-
-      
-
-
 
         private void SaveInvoiceButton_Click(object sender, RoutedEventArgs e)
         {
@@ -184,12 +212,9 @@ namespace ProManSystem.Views
                 return;
             }
 
-            
             decimal ht = decimal.Parse(MontantHTTextBox.Text.Replace('.', ','));
             decimal tva = decimal.Parse(MontantTVATextBox.Text.Replace('.', ','));
             decimal ttc = decimal.Parse(MontantTTCTextBox.Text.Replace('.', ','));
-            
-            
             decimal tvaRate = GetTvaRate();
 
             try
@@ -203,15 +228,11 @@ namespace ProManSystem.Views
                     TauxTVA = tvaRate,
                     MontantTVA = tva,
                     MontantTTC = ttc,
-                    MontantPaye = ttc,       
-                    Reste = 0m,        
-                    EstPayee = true,      
+                    MontantPaye = ttc,
+                    Reste = 0m,
+                    EstPayee = true,
                     DateCreation = DateTime.Now
                 };
-
-
-
-
 
                 foreach (var line in _lines)
                 {
@@ -226,19 +247,45 @@ namespace ProManSystem.Views
 
                 _db.PurchaseInvoices.Add(invoice);
 
-               
+                // تحديث المخزون و PMAPA
                 foreach (var l in invoice.Lignes)
                     UpdateStockAndPmapa(l.RawMaterialId, l.Quantite, l.PrixUnitaire);
 
-               
+                // تحديث بيانات المورد
                 var supplier = _db.Suppliers.First(s => s.Id == invoice.SupplierId);
                 supplier.TotalAchats = (supplier.TotalAchats ?? 0) + invoice.MontantTTC;
                 supplier.Dette = (supplier.Dette ?? 0) + invoice.Reste;
 
                 _db.SaveChanges();
 
-                _history.Add(invoice);
-                HistoryGrid.Items.Refresh();
+                // إعادة تحميل الفاتورة مع البيانات المرتبطة
+                var savedInvoice = _db.PurchaseInvoices
+                    .Where(f => f.Id == invoice.Id)
+                    .Select(f => new PurchaseInvoice
+                    {
+                        Id = f.Id,
+                        NumeroFacture = f.NumeroFacture,
+                        SupplierId = f.SupplierId,
+                        DateFacture = f.DateFacture,
+                        MontantHT = f.MontantHT,
+                        TauxTVA = f.TauxTVA,
+                        MontantTVA = f.MontantTVA,
+                        MontantTTC = f.MontantTTC,
+                        MontantPaye = f.MontantPaye,
+                        Reste = f.Reste,
+                        EstPayee = f.EstPayee,
+                        Supplier = f.Supplier
+                    })
+                    .FirstOrDefault();
+
+                if (savedInvoice != null)
+                {
+                    _history.Insert(0, savedInvoice);
+                    HistoryGrid.Items.Refresh();
+                }
+
+                // تحديث الإحصائيات
+                UpdateStatistics();
 
                 MessageBox.Show("تم حفظ فاتورة الشراء بنجاح.",
                     "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -252,6 +299,9 @@ namespace ProManSystem.Views
             }
         }
 
+        /// <summary>
+        /// تحديث المخزون وحساب السعر المتوسط المرجح (PMAPA)
+        /// </summary>
         private void UpdateStockAndPmapa(int rawMaterialId, decimal qteAchetee, decimal prixAchat)
         {
             var mat = _db.RawMaterials.First(m => m.Id == rawMaterialId);
@@ -264,7 +314,6 @@ namespace ProManSystem.Views
             if (stockNouveau <= 0)
             {
                 mat.StockActuel = stockNouveau;
-               
                 return;
             }
 
@@ -276,21 +325,47 @@ namespace ProManSystem.Views
             mat.PMAPA = Math.Round(pmapaNouveau, 4);
         }
 
-       
-
         private void LoadHistory()
         {
-            _history = new ObservableCollection<PurchaseInvoice>(
-                _db.PurchaseInvoices
-                   .OrderByDescending(f => f.DateFacture)
-                   .Take(100)
-                   .ToList()
-            );
+            try
+            {
+                var invoices = _db.PurchaseInvoices
+                    .OrderByDescending(f => f.DateFacture)
+                    .Take(100)
+                    .Select(f => new PurchaseInvoice
+                    {
+                        Id = f.Id,
+                        NumeroFacture = f.NumeroFacture,
+                        SupplierId = f.SupplierId,
+                        DateFacture = f.DateFacture,
+                        MontantHT = f.MontantHT,
+                        TauxTVA = f.TauxTVA,
+                        MontantTVA = f.MontantTVA,
+                        MontantTTC = f.MontantTTC,
+                        MontantPaye = f.MontantPaye,
+                        Reste = f.Reste,
+                        EstPayee = f.EstPayee,
+                        Supplier = f.Supplier
+                    })
+                    .ToList();
+
+                _history = new ObservableCollection<PurchaseInvoice>(invoices);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors du chargement de l'historique : " + ex.Message,
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                _history = new ObservableCollection<PurchaseInvoice>();
+            }
         }
 
         private void HistorySearchButton_Click(object sender, RoutedEventArgs e)
         {
             string term = (HistorySearchTextBox.Text ?? "").Trim();
+
+            // إزالة النص التوضيحي
+            if (term.StartsWith("🔍"))
+                term = term.Replace("🔍 Rechercher par N°, fournisseur, date...", "").Trim();
 
             if (string.IsNullOrWhiteSpace(term))
             {
@@ -310,7 +385,7 @@ namespace ProManSystem.Views
 
         private void HistoryGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            // يمكن إضافة منطق لعرض تفاصيل الفاتورة المحددة
         }
     }
 }

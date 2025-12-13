@@ -58,7 +58,7 @@
 
     <Grid Margin="15">
         <TabControl>
-            <!-- ==================== TAB: NOUVELLE FACTURE ==================== -->
+           
             <TabItem FontSize="13" FontWeight="SemiBold">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
@@ -96,7 +96,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- STATISTICS -->
+                       
                         <Border Grid.Row="2" Background="White"
                                 BorderBrush="#E2E8F0" BorderThickness="1"
                                 CornerRadius="8" Padding="15">
@@ -131,7 +131,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- MAIN FORM -->
+                        
                         <Border Grid.Row="4" Background="White"
                                 BorderBrush="#4299E1" BorderThickness="3"
                                 CornerRadius="10" Padding="20">
@@ -147,7 +147,7 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- HEADER -->
+                              
                                 <Grid Grid.Row="0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -187,7 +187,7 @@
                                     </Border>
                                 </Grid>
 
-                                <!-- FORM FIELDS -->
+                                
                                 <Grid Grid.Row="2">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -203,7 +203,7 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- LEFT COLUMN -->
+                                       
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="📝 Informations facture" 
                                                        FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,12"/>
@@ -237,7 +237,7 @@
                                             </StackPanel>
                                         </StackPanel>
 
-                                        <!-- RIGHT COLUMN -->
+
                                         <StackPanel Grid.Column="2">
                                             <TextBlock Text="👤 Client et options" 
                                                        FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,12"/>
@@ -291,7 +291,7 @@
                                         </StackPanel>
                                     </Grid>
 
-                                    <!-- PRODUCTS TABLE -->
+                                   
                                     <Border Grid.Row="2" BorderBrush="#E2E8F0" 
                                             BorderThickness="1" CornerRadius="8" Padding="12">
                                         <Grid>
@@ -417,7 +417,7 @@
                 </ScrollViewer>
             </TabItem>
 
-            <!-- ==================== TAB: HISTORIQUE ==================== -->
+            
             <TabItem FontSize="13" FontWeight="SemiBold">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
