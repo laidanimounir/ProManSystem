@@ -442,20 +442,22 @@
                                         Background="#2196F3"
                                         Click="ManageSearchButton_Click"
                                         Style="{StaticResource ModernButton}"/>
-                                <Button Content="✏️ Modifier" Width="130"
+                                <Button Content="✏️ Modifier" Width="122"
                                         Background="#FF9800"
                                         Click="OpenEditDialogButton_Click"
                                         Style="{StaticResource ModernButton}"/>
-                                <Button Content="🖨 Carte" Width="120"
+                                
+                                <Button Content="🖨 Carte" Width="122"
             Background="#4CAF50"
+                                        Margin="0,0,12,0"
             Click="OpenCardButton_Click"
             Style="{StaticResource ModernButton}"/>
                             </StackPanel>
                         </Grid>
-                    </Border>
+                        </Border>
 
-                   
-                    <Border Grid.Row="2" Background="White"
+
+                            <Border Grid.Row="2" Background="White"
                             BorderBrush="#E0E0E0" BorderThickness="1"
                             CornerRadius="8" Padding="16">
                         <Border.Effect>
