@@ -234,7 +234,7 @@ namespace ProManSystem.Views
                 : p.Description;
         }
 
-        // ==== الأحداث الجديدة المطلوبة ====
+      
 
         private void FilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -244,7 +244,7 @@ namespace ProManSystem.Views
 
         private void ProductsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
-            // يمكن إضافة تلوين الصفوف لاحقاً
+            
         }
 
         private void ExportReportButton_Click(object sender, RoutedEventArgs e)

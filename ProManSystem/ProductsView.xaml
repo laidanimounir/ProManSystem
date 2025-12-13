@@ -5,7 +5,7 @@
              FlowDirection="RightToLeft">
 
     <UserControl.Resources>
-        <!-- Styles -->
+        
         <Style x:Key="ModernButton" TargetType="Button">
             <Setter Property="Height" Value="38"/>
             <Setter Property="FontSize" Value="13"/>
@@ -83,7 +83,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- العنوان -->
+        
         <TextBlock Grid.Row="0"
                    Text="إدارة المنتجات"
                    FontSize="26"
@@ -92,7 +92,7 @@
                    Margin="0,0,0,15"
                    HorizontalAlignment="Right"/>
 
-        <!-- كروت الإحصائيات -->
+       
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,15">
             <Border Style="{StaticResource StatCardStyle}">
                 <StackPanel>
@@ -119,7 +119,7 @@
             </Border>
         </StackPanel>
 
-        <!-- شريط البحث والأزرار -->
+       
         <Border Grid.Row="2"
                 Background="White"
                 CornerRadius="8"
@@ -138,7 +138,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- البحث والفلتر -->
+                
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <TextBox x:Name="SearchTextBox"
                              Width="280"
@@ -170,7 +170,7 @@
                     </ComboBox>
                 </StackPanel>
 
-                <!-- أزرار الإجراءات -->
+                
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="AddProductButton"
                             Content="➕ إضافة منتج"
@@ -190,7 +190,7 @@
             </Grid>
         </Border>
 
-        <!-- الجدول والتفاصيل -->
+       
         <Border Grid.Row="3"
                 Background="White"
                 CornerRadius="8"
@@ -328,7 +328,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <!-- عنوان التفاصيل -->
+               
                 <Border Grid.Row="1" Background="#F5F5F5" 
                         CornerRadius="4" Padding="10" Margin="0,15,0,10">
                     <TextBlock Text="📄 تفاصيل المنتج المحدد"
@@ -338,7 +338,7 @@
                                HorizontalAlignment="Right"/>
                 </Border>
 
-                <!-- قسم التفاصيل الموسّع -->
+               
                 <Grid Grid.Row="2" Margin="8,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1.2*"/>
@@ -347,7 +347,7 @@
                         <ColumnDefinition Width="1.5*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- عمود 1: معلومات عامة -->
+                    
                     <Border Grid.Column="0" Background="#F9F9F9" 
                             CornerRadius="6" Padding="12" Margin="0,0,8,0"
                             BorderBrush="#E0E0E0" BorderThickness="1">
@@ -366,7 +366,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- عمود 2: معلومات مالية -->
+                   
                     <Border Grid.Column="1" Background="#F9F9F9" 
                             CornerRadius="6" Padding="12" Margin="0,0,8,0"
                             BorderBrush="#E0E0E0" BorderThickness="1">
@@ -385,7 +385,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- عمود 3: معلومات المخزون -->
+                   
                     <Border Grid.Column="2" Background="#F9F9F9" 
                             CornerRadius="6" Padding="12" Margin="0,0,8,0"
                             BorderBrush="#E0E0E0" BorderThickness="1">
@@ -404,7 +404,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- عمود 4: الوصفة + PDF -->
+                    
                     <Border Grid.Column="3" Background="#F9F9F9" 
                             CornerRadius="6" Padding="12"
                             BorderBrush="#E0E0E0" BorderThickness="1">
