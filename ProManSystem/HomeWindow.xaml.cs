@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using ProManSystem.Views;
 
 namespace ProManSystem
@@ -9,43 +12,38 @@ namespace ProManSystem
         private bool _isFullScreen = false;
         private WindowState _previousWindowState;
         private WindowStyle _previousWindowStyle;
+        private DispatcherTimer _clockTimer;
 
         public HomeWindow()
         {
             InitializeComponent();
-
-
-            TodayTextBlock.Text = DateTime.Today.ToString("dd/MM/yyyy");
-            MainContent.Content = new DashboardView();
-            SetActiveButton(DashboardButton);
+            InitializeDateAndTime();
             MainContent.Content = new DashboardView();
             SetActiveButton(DashboardButton);
         }
 
+        private void InitializeDateAndTime()
+        {
+            var frenchCulture = new CultureInfo("fr-FR");
+            TodayTextBlock.Text = DateTime.Now.ToString("dd MMM yyyy", frenchCulture);
+
+            if (FooterTimeTextBlock != null)
+            {
+                FooterTimeTextBlock.Text = DateTime.Now.ToString("HH:mm");
+                _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+                _clockTimer.Tick += (s, e) => FooterTimeTextBlock.Text = DateTime.Now.ToString("HH:mm");
+                _clockTimer.Start();
+            }
+        }
+
         private void SetActiveButton(Button activeButton)
         {
-         
-            var buttons = new[]
-            {
-                DashboardButton,
-                ClientsButton,
-                ProductsButton,
-                SuppliersButton,
-                RawMaterialsButton,
-                PurchaseInvoicesButton,
-                SalesInvoicesButton
-            };
-
-          
+            var buttons = new[] { DashboardButton, ClientsButton, ProductsButton, SuppliersButton, RawMaterialsButton, PurchaseInvoicesButton, SalesInvoicesButton };
             foreach (var btn in buttons)
             {
-                if (btn != null)
-                    btn.Style = (Style)FindResource("NavButton");
+                if (btn != null) btn.Style = (Style)FindResource("NavButton");
             }
-
-            
-            if (activeButton != null)
-                activeButton.Style = (Style)FindResource("NavButtonActive");
+            if (activeButton != null) activeButton.Style = (Style)FindResource("NavButtonActive");
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -112,24 +110,47 @@ namespace ProManSystem
         {
             if (!_isFullScreen)
             {
-               
                 _previousWindowState = this.WindowState;
                 _previousWindowStyle = this.WindowStyle;
-
-                
                 this.WindowStyle = WindowStyle.None;
                 this.WindowState = WindowState.Maximized;
                 _isFullScreen = true;
             }
             else
             {
-                
                 this.WindowStyle = _previousWindowStyle;
                 this.WindowState = _previousWindowState;
                 _isFullScreen = false;
             }
         }
 
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Voulez-vous vraiment vous déconnecter ?",
+                "Déconnexion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
 
+            if (result == MessageBoxResult.Yes)
+            {
+                if (_clockTimer != null)
+                {
+                    _clockTimer.Stop();
+                    _clockTimer = null;
+                }
+                Application.Current.Shutdown();
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            if (_clockTimer != null)
+            {
+                _clockTimer.Stop();
+                _clockTimer = null;
+            }
+            base.OnClosed(e);
+        }
     }
 }

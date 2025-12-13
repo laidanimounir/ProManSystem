@@ -51,283 +51,375 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="260"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-
+      
         <Border Grid.Row="0" Grid.ColumnSpan="2"
                 Background="White"
                 BorderBrush="#E2E8F0" BorderThickness="0,0,0,1"
-                Height="65">
+                Height="70">
             <Border.Effect>
-                <DropShadowEffect Color="#000000" Opacity="0.05"
-                                  BlurRadius="8" ShadowDepth="2"/>
+                <DropShadowEffect Color="#000000" Opacity="0.08"
+                                  BlurRadius="12" ShadowDepth="3"/>
             </Border.Effect>
 
-            <Grid Margin="16,0">
+            <Grid Margin="20,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="280"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-
+               
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="40" Height="40" Background="#4299E1"
-                            CornerRadius="10" Margin="0,0,12,0">
-                        <TextBlock Text="⚙️" FontSize="22"
-                                   HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Atelio"
-               FontSize="20"
-               FontWeight="Bold"
-               Foreground="#1A202C"/>
-                        <TextBlock Text="Atelier Manager"
-               FontSize="12"
-               Foreground="#718096"/>
-                    </StackPanel>
-                </StackPanel>
-
-
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                    
-                    
-
-                    <StackPanel Margin="0,0,16,0">
-                        <TextBlock Text="Aujourd'hui"
-                                   FontSize="11" Foreground="#A0AEC0"
-                                   HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="TodayTextBlock"
-                                   FontSize="13" FontWeight="SemiBold"
-                                   Foreground="#4A5568"
-                                   HorizontalAlignment="Center"/>
-                    </StackPanel>
-
-                    
-
-                    <StackPanel Orientation="Horizontal">
-                        <Button Width="36" Height="32"
-                                Margin="0,0,8,0"
-                                ToolTip="Nouvelle facture de vente"
-                                Click="QuickNewSalesInvoice_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="#3182CE" CornerRadius="6">
-                                        <TextBlock Text="➕" FontSize="16"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="White"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-
-                        <Button Width="36" Height="32"
-                                Margin="0,0,8,0"
-                                ToolTip="Produits"
-                                Click="QuickProducts_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="#4A5568" CornerRadius="6">
-                                        <TextBlock Text="📦" FontSize="16"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-
-                        <Button Width="36" Height="32"
-                                ToolTip="Clients"
-                                Click="QuickClients_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="#4A5568" CornerRadius="6">
-                                        <TextBlock Text="👥" FontSize="16"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                        <Button x:Name="FullScreenButton"
-        Width="32" Height="28"
-        Margin="8,0,0,0"
-        ToolTip="Plein écran"
-        Click="FullScreenButton_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="#4A5568" CornerRadius="6">
-                                        <TextBlock Text="⛶"
-                           FontSize="14"
-                           Foreground="White"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-
-
-                    </StackPanel>
-                </StackPanel>
-
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="35" Height="35" Background="#EDF2F7"
-                            CornerRadius="18" Margin="0,0,10,0">
-                        <TextBlock Text="👤" FontSize="18"
+                    <Border Width="45" Height="45" CornerRadius="12" Margin="0,0,12,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#4299E1" Offset="0"/>
+                                <GradientStop Color="#3182CE" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect Color="#4299E1" Opacity="0.3" BlurRadius="8" ShadowDepth="0"/>
+                        </Border.Effect>
+                        <TextBlock Text="⚙️" FontSize="24"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Walid" FontSize="13"
-                                   FontWeight="SemiBold" Foreground="#2D3748"/>
-                        <TextBlock Text="En ligne" FontSize="11" Foreground="#48BB78"/>
+                        <TextBlock Text="Atelio"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#1A202C"/>
+                        <TextBlock Text="Atelier Manager"
+                                   FontSize="11"
+                                   Foreground="#718096"
+                                   Margin="0,-2,0,0"/>
                     </StackPanel>
+                </StackPanel>
+
+                
+                <Grid Grid.Column="1" Margin="30,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    
+                    <Border Grid.Column="0" Background="#F7FAFC" CornerRadius="8" 
+                            Height="38" VerticalAlignment="Center"
+                            BorderBrush="#E2E8F0" BorderThickness="1"
+                            Margin="0,0,15,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="🔍" FontSize="16" 
+                                       Margin="12,0,8,0"
+                                       VerticalAlignment="Center"
+                                       Foreground="#A0AEC0"/>
+
+                            <TextBox Grid.Column="1"
+                                     x:Name="SearchTextBox"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     VerticalAlignment="Center"
+                                     FontSize="13"
+                                     Foreground="#2D3748"
+                                     Text="Rechercher produits, clients, factures..."/>
+
+                            <Border Grid.Column="2" Background="#E2E8F0" 
+                                    CornerRadius="4" Padding="6,2"
+                                    Margin="0,0,8,0" VerticalAlignment="Center">
+                                <TextBlock Text="Ctrl+K" FontSize="10" 
+                                           Foreground="#CBD5E0"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#F7FAFC" CornerRadius="8" Padding="4" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Width="36" Height="30" Margin="2"
+                                        ToolTip="Nouvelle facture de vente"
+                                        Click="QuickNewSalesInvoice_Click"
+                                        Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <TextBlock Text="➕" FontSize="16" Foreground="#4A5568"/>
+                                </Button>
+
+                                <Button Width="36" Height="30" Margin="2"
+                                        ToolTip="Produits"
+                                        Click="QuickProducts_Click"
+                                        Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <TextBlock Text="📦" FontSize="16"/>
+                                </Button>
+
+                                <Button Width="36" Height="30" Margin="2"
+                                        ToolTip="Clients"
+                                        Click="QuickClients_Click"
+                                        Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <TextBlock Text="👥" FontSize="16"/>
+                                </Button>
+
+                                <Button x:Name="FullScreenButton"
+                                        Width="36" Height="30" Margin="2"
+                                        ToolTip="Plein écran"
+                                        Click="FullScreenButton_Click"
+                                        Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                    <TextBlock Text="⛶" FontSize="14" Foreground="#4A5568"/>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                     
+                        <Border Background="#EBF8FF" CornerRadius="8" Padding="12,6" Margin="0,0,15,0">
+                            <StackPanel>
+                                <TextBlock Text="Aujourd'hui"
+                                           FontSize="9" Foreground="#2C5282"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,2"/>
+                                <TextBlock x:Name="TodayTextBlock"
+                                           FontSize="12" FontWeight="Bold"
+                                           Foreground="#2B6CB0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                  
+                    <Button Width="40" Height="40"
+                            Margin="0,0,8,0"
+                            ToolTip="Notifications (3 nouvelles)"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand">
+                        <Border Background="#FFF5F5" CornerRadius="20"
+                                Width="40" Height="40"
+                                BorderBrush="#FED7D7" BorderThickness="1">
+                            <Grid>
+                                <TextBlock Text="🔔" FontSize="18"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border Width="18" Height="18" 
+                                        Background="#E53E3E"
+                                        CornerRadius="9"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        Margin="0,2,2,0">
+                                    <TextBlock Text="3" FontSize="10" FontWeight="Bold"
+                                               Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Button>
+
+                  
+                    <Border Width="1" Height="35" Background="#E2E8F0" Margin="8,0"/>
+
+                    <Border Background="#F7FAFC" CornerRadius="20" Padding="6,4,12,4" Margin="8,0,0,0"
+                            BorderBrush="#E2E8F0" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" CornerRadius="16" Margin="0,0,10,0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#4299E1" Offset="0"/>
+                                        <GradientStop Color="#3182CE" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <TextBlock Text="👤" FontSize="18"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
+                                <TextBlock Text="Walid" FontSize="13"
+                                           FontWeight="Bold" Foreground="#2D3748"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="6" Height="6" Fill="#48BB78" Margin="0,0,4,0"/>
+                                    <TextBlock Text="En ligne" FontSize="10" Foreground="#48BB78" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Button Width="28" Height="28"
+                                    ToolTip="Paramètres"
+                                    Margin="0,0,4,0"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand">
+                                <Border Background="#E2E8F0" CornerRadius="14"
+                                        Width="28" Height="28">
+                                    <TextBlock Text="⚙️" FontSize="14"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Button>
+
+                            <Button Width="28" Height="28"
+                                    ToolTip="Déconnexion"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Click="LogoutButton_Click">
+                                <Border Background="#FED7D7" CornerRadius="14"
+                                        Width="28" Height="28">
+                                    <TextBlock Text="🚪" FontSize="14"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Button>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Grid>
         </Border>
 
-
-        <Grid Grid.Row="1" Grid.Column="0" Background="#1A202C">
+       
+        <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Background="#1A202C">
             <Grid.Effect>
                 <DropShadowEffect Color="#000000" Opacity="0.1"
                                   BlurRadius="10" ShadowDepth="0" Direction="0"/>
             </Grid.Effect>
 
-            <StackPanel Margin="0,20,0,0">
-                <TextBlock Text="MENU PRINCIPAL"
-                           Foreground="#718096" FontSize="11" FontWeight="Bold"
-                           Margin="20,0,0,15"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                <Button x:Name="DashboardButton"
-                        Style="{StaticResource NavButtonActive}"
-                        Click="DashboardButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="#3182CE"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="📊" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Text="MENU PRINCIPAL"
+                               Foreground="#718096" FontSize="11" FontWeight="Bold"
+                               Margin="20,0,0,15"/>
 
-                <Button x:Name="ClientsButton"
-                        Style="{StaticResource NavButton}"
-                        Click="ClientsButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="👥" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Clients" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+                    <Button x:Name="DashboardButton"
+                            Style="{StaticResource NavButtonActive}"
+                            Click="DashboardButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#3182CE"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="📊" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-                <Button x:Name="ProductsButton"
-                        Style="{StaticResource NavButton}"
-                        Click="ProductsButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="📦" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Produits" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+                    <Button x:Name="ClientsButton"
+                            Style="{StaticResource NavButton}"
+                            Click="ClientsButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#38A169"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="👥" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Clients" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-                <Button x:Name="SuppliersButton"
-                        Style="{StaticResource NavButton}"
-                        Click="SuppliersButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="🏭" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Fournisseurs" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+                    <Button x:Name="ProductsButton"
+                            Style="{StaticResource NavButton}"
+                            Click="ProductsButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#ED8936"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="📦" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Produits" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-                <Button x:Name="RawMaterialsButton"
-                        Style="{StaticResource NavButton}"
-                        Click="RawMaterialsButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="🧵" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Matières premières" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+                    <Button x:Name="SuppliersButton"
+                            Style="{StaticResource NavButton}"
+                            Click="SuppliersButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#9F7AEA"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="🏭" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Fournisseurs" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-                <Button x:Name="PurchaseInvoicesButton"
-                        Style="{StaticResource NavButton}"
-                        Click="PurchaseInvoicesButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="🧾" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Factures achat" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+                    <Button x:Name="RawMaterialsButton"
+                            Style="{StaticResource NavButton}"
+                            Click="RawMaterialsButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#D69E2E"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="🧵" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Matières premières" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-                <Button x:Name="SalesInvoicesButton"
-                        Style="{StaticResource NavButton}"
-                        Click="SalesInvoicesButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="🧾" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Factures vente" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+                    <Button x:Name="PurchaseInvoicesButton"
+                            Style="{StaticResource NavButton}"
+                            Click="PurchaseInvoicesButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#319795"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="🧾" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Factures achat" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-                <Border Height="1" Background="#2D3748" Margin="20,20,20,20"/>
+                    <Button x:Name="SalesInvoicesButton"
+                            Style="{StaticResource NavButton}"
+                            Click="SalesInvoicesButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#2B6CB0"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="💰" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Factures vente" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-                <TextBlock Text="AUTRES"
-                           Foreground="#718096" FontSize="11" FontWeight="Bold"
-                           Margin="20,0,0,15"/>
+                    <Border Height="1" Background="#2D3748" Margin="20,20,20,20"/>
 
-                <Button Style="{StaticResource NavButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="⚙️" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Paramètres" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
+                    <TextBlock Text="AUTRES"
+                               Foreground="#718096" FontSize="11" FontWeight="Bold"
+                               Margin="20,0,0,15"/>
 
-                <Button Style="{StaticResource NavButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="32" Height="32" Background="Transparent"
-                                CornerRadius="6" Margin="0,0,12,0">
-                            <TextBlock Text="📊" FontSize="16"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Rapports" VerticalAlignment="Center" FontSize="14"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
+                    <Button Style="{StaticResource NavButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#4A5568"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="⚙️" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Paramètres" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
 
-            <Border VerticalAlignment="Bottom" Margin="15,0,15,20"
+                    <Button Style="{StaticResource NavButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="32" Height="32" Background="#4A5568"
+                                    CornerRadius="6" Margin="0,0,12,0">
+                                <TextBlock Text="📈" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="Rapports" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </ScrollViewer>
+
+            
+            <Border Grid.Row="1" Margin="15,0,15,20"
                     Background="#2D3748" CornerRadius="8" Padding="12">
                 <StackPanel>
                     <TextBlock Text="💡 Astuce du jour" FontSize="11"
@@ -342,9 +434,43 @@
                 HorizontalAlignment="Right" Width="1"
                 Background="#E2E8F0"/>
 
-
+     
         <Grid Grid.Row="1" Grid.Column="1" Background="#F5F7FA">
             <ContentControl x:Name="MainContent" Margin="0"/>
         </Grid>
+
+       
+        <Border Grid.Row="2" Grid.Column="1"
+                Background="White"
+                BorderBrush="#E2E8F0" BorderThickness="0,1,0,0"
+                Height="40">
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="© 2025 Atelio" FontSize="11" Foreground="#718096" Margin="0,0,15,0"/>
+                    <TextBlock Text="•" FontSize="11" Foreground="#CBD5E0" Margin="0,0,15,0"/>
+                    <TextBlock Text="Smart Workshop v1.0" FontSize="11" Foreground="#718096"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
+                    <TextBlock Text="🕐" FontSize="13" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="FooterTimeTextBlock"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="#4A5568"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#E6FFFA" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                        <TextBlock Text="✓ Connecté" FontSize="10" Foreground="#2C7A7B" FontWeight="SemiBold"/>
+                    </Border>
+                    <TextBlock Text="Base de données active" FontSize="11" Foreground="#718096"/>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
