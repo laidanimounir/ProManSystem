@@ -161,7 +161,7 @@ namespace ProManSystem.Views
                                $"المطلوب = {r.QuantityNeeded}, " +
                                $"بعد الإنتاج = {r.StockAfter}\n";
                     }
-                    msg += "\nهل تريد المتابعة وجعل المخزون سالبًا لهذه المواد؟";
+                    msg += "\nهل تريد المتابعة ومعاينة الاستهلاك مع السماح بأن يصبح المخزون سالباً لهذه المواد؟";
 
                     var res = MessageBox.Show(msg, "تحذير مخزون",
                         MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -170,10 +170,22 @@ namespace ProManSystem.Views
                         return;
                 }
 
-               // ApplyProduction(product.Id, qty, results);
+                // عرض تفاصيل الاستهلاك (محاكاة فقط بدون أي تغيير في المخزون)
+                string details = $"تفاصيل استهلاك المواد لكمية إنتاج = {qty}:\n\n";
+                foreach (var r in results)
+                {
+                    details += $"{r.RawMaterialName} - المطلوب: {r.QuantityNeeded}, " +
+                               $"المخزون الحالي: {r.CurrentStock}, " +
+                               $"بعد الإنتاج (افتراضياً): {r.StockAfter}\n";
+                }
 
-                MessageBox.Show("تم تنفيذ الإنتاج وتحديث المخزون.", "تم",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(details,
+                    "معاينة استهلاك المواد", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                MessageBox.Show("تم حساب استهلاك المواد لهذا الإنتاج (بدون أي تغيير فعلي في المخزون).",
+                    "معاينة الإنتاج", MessageBoxButton.OK, MessageBoxImage.Information);
+
+
 
                 LoadProducts(SearchTextBox.Text);
             }
