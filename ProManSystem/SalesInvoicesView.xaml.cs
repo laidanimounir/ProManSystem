@@ -253,13 +253,13 @@ namespace ProManSystem.Views
                     product.StockActuel -= l.Quantite;
                 }
 
-                // تحديث CA للزبون
+              
                 var customer = _db.Customers.First(c => c.Id == invoice.CustomerId);
                 customer.CA_TTC = (customer.CA_TTC ?? 0) + invoice.MontantTTC;
 
                 _db.SaveChanges();
 
-                // إعادة تحميل الفاتورة مع البيانات المرتبطة
+               
                 var savedInvoice = _db.SalesInvoices
                     .Where(f => f.Id == invoice.Id)
                     .Select(f => new SalesInvoice

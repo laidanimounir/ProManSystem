@@ -170,7 +170,7 @@ namespace ProManSystem.Views
                         return;
                 }
 
-                ApplyProduction(product.Id, qty, results);
+               // ApplyProduction(product.Id, qty, results);
 
                 MessageBox.Show("تم تنفيذ الإنتاج وتحديث المخزون.", "تم",
                     MessageBoxButton.OK, MessageBoxImage.Information);
@@ -183,7 +183,7 @@ namespace ProManSystem.Views
                     "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
+        // نحتاجها في بيع المنتوج
         private void ApplyProduction(int productId, decimal quantityToProduce,
                                      List<ConsumptionResult> results)
         {
