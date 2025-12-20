@@ -38,7 +38,7 @@ namespace ProManSystem
 
         private void SetActiveButton(Button activeButton)
         {
-            var buttons = new[] { DashboardButton, ClientsButton, ProductsButton, SuppliersButton, RawMaterialsButton, PurchaseInvoicesButton, SalesInvoicesButton };
+            var buttons = new[] { DashboardButton, ClientsButton, ProductsButton, SuppliersButton, RawMaterialsButton, PurchaseInvoicesButton, SalesInvoicesButton, SalesInvoicesListButton };
             foreach (var btn in buttons)
             {
                 if (btn != null) btn.Style = (Style)FindResource("NavButton");
@@ -104,6 +104,12 @@ namespace ProManSystem
         {
             SetActiveButton(ClientsButton);
             MainContent.Content = new ClientsView();
+        }
+
+        private void SalesInvoicesListButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveButton(SalesInvoicesListButton);
+            MainContent.Content = new SalesInvoicesListView();   
         }
 
         private void FullScreenButton_Click(object sender, RoutedEventArgs e)

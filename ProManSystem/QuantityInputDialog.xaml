@@ -1,0 +1,59 @@
+﻿<Window x:Class="ProManSystem.Views.QuantityInputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="إدخال الكمية"
+        Height="180"
+        Width="320"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow"
+        FlowDirection="RightToLeft">
+    <Border Background="#FAFAFA" Padding="15">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="أدخل الكمية المراد بيعها:"
+                       FontSize="14"
+                       Margin="0,0,0,10"/>
+
+            <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,10">
+                <TextBox x:Name="QuantityTextBox"
+                         Width="120"
+                         Height="30"
+                         VerticalContentAlignment="Center"
+                         FontSize="14"
+                         HorizontalAlignment="Right"
+                         PreviewTextInput="QuantityTextBox_PreviewTextInput"/>
+                <TextBlock x:Name="MaxLabel"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="#666666"
+                           FontSize="12"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Content="موافق"
+                        Width="80"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        Click="OkButton_Click"/>
+                <Button Content="إلغاء"
+                        Width="80"
+                        Height="30"
+                        Background="#9E9E9E"
+                        Foreground="White"
+                        Click="CancelButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
