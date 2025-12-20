@@ -55,7 +55,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- العنوان -->
+      
         <TextBlock Grid.Row="0"
                    Text="📑 فواتير البيع المحفوظة"
                    FontSize="20"
@@ -64,7 +64,7 @@
                    Margin="0,0,0,10"
                    HorizontalAlignment="Right"/>
 
-        <!-- شريط البحث -->
+       
         <Border Grid.Row="1"
                 Background="#F9F9F9"
                 CornerRadius="6"
@@ -80,7 +80,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- رقم الفاتورة -->
+              
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,10,0">
                     <TextBlock Text="رقم الفاتورة:"
                                Width="90"
@@ -91,7 +91,7 @@
                              Style="{StaticResource ModernTextBox}"/>
                 </StackPanel>
 
-                <!-- الزبون -->
+               
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
                     <TextBlock Text="الزبون:"
                                Width="60"
@@ -102,7 +102,7 @@
                              Style="{StaticResource ModernTextBox}"/>
                 </StackPanel>
 
-                <!-- التاريخ -->
+                
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <TextBlock Text="من:"
                                Width="30"
@@ -122,7 +122,7 @@
                                 Height="30"/>
                 </StackPanel>
 
-                <!-- الأزرار -->
+                
                 <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="بحث"
                             Width="80"
@@ -139,7 +139,7 @@
             </Grid>
         </Border>
 
-        <!-- جدول الفواتير -->
+      
         <Border Grid.Row="2"
                 Background="White"
                 CornerRadius="6"
@@ -194,7 +194,7 @@
             </DataGrid>
         </Border>
 
-        <!-- شريط الأزرار أسفل -->
+       
         <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"

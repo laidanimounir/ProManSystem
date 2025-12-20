@@ -27,7 +27,7 @@ namespace ProManSystem.Views
             LoadInvoices();
         }
 
-        // تحميل كل الفواتير
+        
         private void LoadInvoices()
         {
             try
@@ -62,7 +62,7 @@ namespace ProManSystem.Views
             }
         }
 
-        // تطبيق البحث
+     
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -161,7 +161,7 @@ namespace ProManSystem.Views
                 return;
             }
 
-            // هنا يمكنك فتح نافذة جديدة لعرض تفاصيل الفاتورة فقط
+        
             MessageBox.Show($"رقم الفاتورة: {item.NumeroFacture}\n" +
                             $"الزبون: {item.CustomerName}\n" +
                             $"التاريخ: {item.DateFacture:dd/MM/yyyy}\n" +
@@ -172,7 +172,7 @@ namespace ProManSystem.Views
         }
     }
 
-    // عنصر بيانات لعرض الفواتير في الـ DataGrid
+
     public class SalesInvoiceListItem
     {
         public int Id { get; set; }

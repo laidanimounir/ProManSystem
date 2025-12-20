@@ -46,9 +46,7 @@ namespace ProManSystem.Views
             }
         }
 
-        // ============================================
-        // تهيئة قائمة TVA
-        // ============================================
+        
         private void InitTvaList()
         {
             var defaultRates = new[] { 19m, 9m, 0m };
@@ -65,9 +63,7 @@ namespace ProManSystem.Views
             return decimal.TryParse(txt, out var t) ? t : 0m;
         }
 
-        // ============================================
-        // تحضير فاتورة جديدة
-        // ============================================
+       
         private void PrepareNewInvoice()
         {
             if (NumeroFactureTextBox != null)
@@ -114,9 +110,7 @@ namespace ProManSystem.Views
             }
         }
 
-        // ============================================
-        // تحميل المنتجات المتاحة مع حساب أقصى كمية
-        // ============================================
+  
         private void LoadAvailableProducts()
         {
             try
@@ -156,7 +150,7 @@ namespace ProManSystem.Views
             if (product.ProductRecipes == null)
                 return 0m;
 
-            // فقط الوصفات الصالحة
+          
             var validRecipes = product.ProductRecipes
                 .Where(r => r.RawMaterial != null && r.QuantiteNecessaire > 0 && r.RawMaterial.StockActuel > 0)
                 .ToList();
@@ -164,20 +158,17 @@ namespace ProManSystem.Views
             if (!validRecipes.Any())
                 return 0m;
 
-            // لكل مادة: المخزون / الكمية لكل وحدة
+            
             var possibleQuantities = validRecipes
                 .Select(r => r.RawMaterial.StockActuel / r.QuantiteNecessaire);
 
-            // أقل قيمة هي الحد الأقصى للوحدات
+
             var maxQty = possibleQuantities.Min();
 
             return Math.Floor(maxQty);
         }
 
 
-        // ============================================
-        // عرض تفاصيل وصفة المنتج المختار
-        // ============================================
         private void AvailableProductsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (AvailableProductsGrid.SelectedItem is not ProductWithMaxQuantity selectedProduct)
@@ -237,9 +228,7 @@ namespace ProManSystem.Views
             }
         }
 
-        // ============================================
-        // إضافة منتج للفاتورة (نقر مزدوج)
-        // ============================================
+      
         private void AvailableProductsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (AvailableProductsGrid.SelectedItem is not ProductWithMaxQuantity selectedProduct)
@@ -252,7 +241,7 @@ namespace ProManSystem.Views
                 return;
             }
 
-            // طلب الكمية من المستخدم
+            
             var dialog = new QuantityInputDialog(selectedProduct.MaxQuantity)
             {
                 Owner = Window.GetWindow(this)
@@ -294,9 +283,7 @@ namespace ProManSystem.Views
             RecalculateTotals();
         }
 
-        // ============================================
-        // حذف سطر من الفاتورة
-        // ============================================
+    
         private void DeleteLineButton_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.DataContext is SalesInvoiceLine line)
@@ -306,9 +293,7 @@ namespace ProManSystem.Views
             }
         }
 
-        // ============================================
-        // حساب الإجماليات
-        // ============================================
+  
         private void RecalculateTotals()
         {
             decimal ht = _invoiceLines.Sum(l => l.MontantLigne);
@@ -329,9 +314,7 @@ namespace ProManSystem.Views
             RecalculateTotals();
         }
 
-        // ============================================
-        // اختيار الزبون
-        // ============================================
+    
         private void PickCustomerButton_Click(object sender, RoutedEventArgs e)
         {
             var win = new CustomerPickerWindow
@@ -347,12 +330,10 @@ namespace ProManSystem.Views
             }
         }
 
-        // ============================================
-        // حفظ الفاتورة
-        // ============================================
+      
         private void SaveInvoiceButton_Click(object sender, RoutedEventArgs e)
         {
-            // التحقق من البيانات
+           
             if (_selectedCustomer == null)
             {
                 MessageBox.Show("اختر الزبون أولاً.", "تنبيه",
@@ -374,7 +355,7 @@ namespace ProManSystem.Views
                 return;
             }
 
-            // قراءة القيم
+           
             decimal ht = decimal.Parse(MontantHTTextBox.Text.Replace('.', ','));
             decimal tva = decimal.Parse(MontantTVATextBox.Text.Replace('.', ','));
             decimal ttc = decimal.Parse(MontantTTCTextBox.Text.Replace('.', ','));
@@ -382,7 +363,7 @@ namespace ProManSystem.Views
 
             try
             {
-                // إنشاء الفاتورة
+               
                 var invoice = new SalesInvoice
                 {
                     NumeroFacture = NumeroFactureTextBox.Text,
@@ -398,7 +379,7 @@ namespace ProManSystem.Views
                     DateCreation = DateTime.Now
                 };
 
-                // إضافة السطور
+              
                 foreach (var line in _invoiceLines)
                 {
                     invoice.Lignes.Add(new SalesInvoiceLine
@@ -412,7 +393,7 @@ namespace ProManSystem.Views
 
                 _db.SalesInvoices.Add(invoice);
 
-                // المنطق الجديد: خصم من المواد الأولية وتحديث مخزون المنتج
+            
                 foreach (var line in invoice.Lignes)
                 {
                     var product = _db.Products
@@ -420,7 +401,7 @@ namespace ProManSystem.Views
                         .ThenInclude(pr => pr.RawMaterial)
                         .First(p => p.Id == line.ProductId);
 
-                    // خصم من المواد الأولية
+                   
                     foreach (var recipe in product.ProductRecipes)
                     {
                         var rawMaterial = recipe.RawMaterial;
@@ -428,12 +409,12 @@ namespace ProManSystem.Views
                         rawMaterial.StockActuel -= requiredQty;
                     }
 
-                    // تحديث مخزون المنتج (للعرض فقط)
+                    
                     decimal newProductStock = CalculateMaxQuantityFromRawMaterials(product);
                     product.StockActuel = newProductStock;
                 }
 
-                // تحديث CA الزبون
+               
                 var customer = _db.Customers.First(c => c.Id == invoice.CustomerId);
                 customer.CA_TTC = (customer.CA_TTC ?? 0) + invoice.MontantTTC;
 
@@ -442,7 +423,7 @@ namespace ProManSystem.Views
                 MessageBox.Show("تم حفظ فاتورة البيع بنجاح.", "نجح",
                     MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // إعادة تحميل
+             
                 PrepareNewInvoice();
                 LoadAvailableProducts();
             }
@@ -453,9 +434,8 @@ namespace ProManSystem.Views
             }
         }
 
-        // ============================================
-        // مسح النموذج
-        // ============================================
+       
+       
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
             PrepareNewInvoice();
@@ -463,9 +443,9 @@ namespace ProManSystem.Views
         }
     }
 
-    // ============================================
+   
     // كلاسات مساعدة
-    // ============================================
+  
     public class ProductWithMaxQuantity
     {
         public int Id { get; set; }
