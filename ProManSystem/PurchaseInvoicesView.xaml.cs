@@ -407,7 +407,7 @@ namespace ProManSystem.Views
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((PurchaseInvoicesGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
+            if ((HistoryGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
             {
                 MessageBox.Show("اختر فاتورة أولاً.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -434,7 +434,7 @@ namespace ProManSystem.Views
 
         private void EditInvoiceButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((PurchaseInvoicesGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
+            if ((HistoryGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
             {
                 MessageBox.Show("اختر فاتورة أولاً.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
