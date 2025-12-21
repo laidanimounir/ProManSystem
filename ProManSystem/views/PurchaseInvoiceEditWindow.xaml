@@ -1,0 +1,82 @@
+﻿<Window x:Class="ProManSystem.Views.PurchaseInvoiceEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="تعديل فاتورة الشراء" Height="600" Width="900"
+        WindowStartupLocation="CenterOwner" Background="#f9f9f9">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Margin="20">
+            <StackPanel>
+               
+                <TextBlock Text="معلومات الفاتورة" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <TextBlock Text="رقم الفاتورة:" Margin="0,0,0,5"/>
+                        <TextBox x:Name="NumeroFactureTextBox" Height="32" Padding="8"/>
+                        <TextBlock Text="التاريخ:" Margin="0,15,0,5"/>
+                        <DatePicker x:Name="DateFactureDatePicker" Height="32"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="المورد:" Margin="0,0,0,5"/>
+                        <TextBox x:Name="SupplierTextBox" Height="32" Padding="8" IsReadOnly="True"/>
+                    </StackPanel>
+                </Grid>
+
+                
+                <TextBlock Text="البنود" FontSize="14" FontWeight="Bold" Margin="0,30,0,10"/>
+
+                <DataGrid x:Name="PurchaseInvoicesGrid" Height="300" AutoGenerateColumns="False" 
+                          CanUserAddRows="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="المادة" Binding="{Binding RawMaterial.Designation}" 
+                                          IsReadOnly="True" Width="200"/>
+                        <DataGridTextColumn Header="الكمية" Binding="{Binding Quantite}" Width="80"/>
+                        <DataGridTextColumn Header="السعر" Binding="{Binding PrixUnitaire}" Width="80"/>
+                        <DataGridTextColumn Header="المجموع" Binding="{Binding MontantTotalHT}" 
+                                          IsReadOnly="True" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                
+                <StackPanel Margin="0,20,0,0" HorizontalAlignment="Right">
+                    <Grid Width="300">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="الإجمالي بدون ضريبة:" Margin="0,0,10,10"/>
+                        <TextBox Grid.Column="1" x:Name="TotalHTTextBox" Height="30" IsReadOnly="True" Margin="0,0,0,10"/>
+
+                        <TextBlock Grid.Column="0" Text="الضريبة (19%):" Margin="0,0,10,10"/>
+                        <TextBox Grid.Column="1" x:Name="TVATextBox" Height="30" IsReadOnly="True" Margin="0,0,0,10"/>
+
+                        <TextBlock Grid.Column="0" Text="الإجمالي مع الضريبة:" FontWeight="Bold" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="1" x:Name="TotalTTCTextBox" Height="30" IsReadOnly="True" FontWeight="Bold"/>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+       
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" 
+                    VerticalAlignment="Center" Margin="20">
+            <Button Content="حفظ التعديلات" Click="SaveButton_Click" Width="120" Margin="0,0,10,0"
+                    Background="#2196F3" Foreground="White" Height="40"/>
+            <Button Content="إلغاء" Click="CancelButton_Click" Width="100"
+                    Background="#f44336" Foreground="White" Height="40"/>
+        </StackPanel>
+    </Grid>
+</Window>

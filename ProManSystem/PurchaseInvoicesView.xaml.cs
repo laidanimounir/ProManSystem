@@ -1,5 +1,6 @@
 ﻿using ProManSystem.Data;
 using ProManSystem.Models;
+using ProManSystem.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -16,6 +17,8 @@ namespace ProManSystem.Views
         private Supplier? _selectedSupplier;
         private ObservableCollection<PurchaseInvoiceLine> _lines = new();
         private ObservableCollection<PurchaseInvoice> _history = new();
+        private InvoicePdfService _pdfService;
+
 
         public PurchaseInvoicesView()
         {
@@ -25,8 +28,9 @@ namespace ProManSystem.Views
             PrepareNewInvoice();
             UpdateStatistics();
 
-            LinesGrid.ItemsSource = _lines;
+            PurchaseInvoicesGrid.ItemsSource = _lines;
             HistoryGrid.ItemsSource = _history;
+            _pdfService = new InvoicePdfService(_db);
         }
 
         private void UpdateStatistics()
@@ -399,5 +403,53 @@ namespace ProManSystem.Views
         {
             // يمكن لاحقاً إضافة عرض تفاصيل الفاتورة المختارة
         }
+
+
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((PurchaseInvoicesGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
+            {
+                MessageBox.Show("اختر فاتورة أولاً.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                string pdfPath = _pdfService.GeneratePurchaseInvoicePdf(invoiceId);
+                MessageBox.Show($"تم حفظ الفاتورة بنجاح:\n\n{pdfPath}",
+                    "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // فتح الملف تلقائياً
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = pdfPath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message, "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void EditInvoiceButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((PurchaseInvoicesGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
+            {
+                MessageBox.Show("اختر فاتورة أولاً.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // فتح نافذة التعديل
+            var editWindow = new PurchaseInvoiceEditWindow(invoiceId, _db);
+            editWindow.ShowDialog();
+            LoadInvoices();
+        }
+
+        private void LoadInvoices()
+        {
+            // لاحقًا نكتب منطق تحميل الفواتير هنا
+        }
+
     }
 }
