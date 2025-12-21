@@ -6,10 +6,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows.Controls;
 
+using PdfSharp.Pdf;          // لو بقيت PdfSharp-gdi
+using PdfSharp.Drawing;
 
 using QRCoder;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
+//using PdfSharp.Drawing;
+//using PdfSharp.Pdf;
 
 using DrawingBitmap = System.Drawing.Bitmap;
 using DrawingImage = System.Drawing.Image;

@@ -6,8 +6,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using QRCoder;
+//using PdfSharp.Drawing;
+//using PdfSharp.Pdf;
+using PdfSharp.Pdf;          // لو بقيت PdfSharp-gdi
 using PdfSharp.Drawing;
-using PdfSharp.Pdf;
+
+
 
 namespace ProManSystem.Views
 {
