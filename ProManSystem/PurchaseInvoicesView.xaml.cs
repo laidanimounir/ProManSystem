@@ -7,6 +7,9 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using ClosedXML.Excel;
+using System.IO;
+using Microsoft.Win32;
 
 namespace ProManSystem.Views
 {
@@ -424,7 +427,7 @@ namespace ProManSystem.Views
                 MessageBox.Show($"تم حفظ الفاتورة بنجاح:\n\n{pdfPath}",
                     "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // فتح الملف تلقائياً
+               
                 var processInfo = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = pdfPath,
@@ -462,7 +465,7 @@ namespace ProManSystem.Views
             editWindow.Owner = Application.Current.MainWindow;
             editWindow.ShowDialog();
 
-            // بعد الإغلاق، أعد تحميل التاريخ
+           
             LoadHistory();
             HistoryGrid.ItemsSource = _history;
         }
@@ -471,41 +474,65 @@ namespace ProManSystem.Views
 
         private void ExportExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            // مثال بسيط: تصدير الفواتير المعروضة في HistoryGrid إلى ملف CSV يمكن فتحه في Excel
             try
             {
-                string folder = System.IO.Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory, "Exports");
+                var items = HistoryGrid.ItemsSource ?? _history;
+                var invoices = items.Cast<PurchaseInvoice>().ToList();
 
-                if (!System.IO.Directory.Exists(folder))
-                    System.IO.Directory.CreateDirectory(folder);
-
-                string filePath = System.IO.Path.Combine(
-                    folder, $"PurchaseInvoices_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
-
-                using (var writer = new System.IO.StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+                if (invoices.Count == 0)
                 {
-                    // العناوين
-                    writer.WriteLine("Numero;Supplier;Date;MontantTTC");
-
-                    // لو كنت تريد فقط النتائج الحالية في HistoryGrid
-                    var items = HistoryGrid.ItemsSource ?? _history;
-
-                    foreach (var inv in items.Cast<PurchaseInvoice>())
-                    {
-                        string numero = inv.NumeroFacture;
-                        string supplier = inv.Supplier?.Designation ?? "";
-                        string date = inv.DateFacture.ToString("dd/MM/yyyy");
-                        string ttc = inv.MontantTTC.ToString("N2", CultureInfo.InvariantCulture);
-
-                        writer.WriteLine($"{numero};{supplier};{date};{ttc}");
-                    }
+                    MessageBox.Show("لا توجد فواتير لتصديرها.", "تنبيه",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
                 }
 
-                MessageBox.Show($"تم تصدير الفواتير إلى Excel (ملف CSV):\n{filePath}",
+               
+                var dialog = new SaveFileDialog
+                {
+                    Title = "اختر مكان حفظ ملف Excel",
+                    Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+                    FileName = $"PurchaseInvoices_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx",
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                };
+
+                bool? result = dialog.ShowDialog();
+                if (result != true)
+                    return; 
+
+                string filePath = dialog.FileName;
+
+                
+                using (var workbook = new XLWorkbook())
+                {
+                    var ws = workbook.Worksheets.Add("Fournisseurs");
+
+                    ws.Cell(1, 1).Value = "Numero";
+                    ws.Cell(1, 2).Value = "Fournisseur";
+                    ws.Cell(1, 3).Value = "Date";
+                    ws.Cell(1, 4).Value = "Montant TTC";
+
+                    ws.Row(1).Style.Font.Bold = true;
+                    ws.Row(1).Style.Fill.BackgroundColor = XLColor.LightGray;
+
+                    int row = 2;
+                    foreach (var inv in invoices)
+                    {
+                        ws.Cell(row, 1).Value = inv.NumeroFacture;
+                        ws.Cell(row, 2).Value = inv.Supplier?.Designation ?? "";
+                        ws.Cell(row, 3).Value = inv.DateFacture;
+                        ws.Cell(row, 3).Style.DateFormat.Format = "dd/MM/yyyy";
+                        ws.Cell(row, 4).Value = inv.MontantTTC;
+                        ws.Cell(row, 4).Style.NumberFormat.Format = "#,##0.00";
+                        row++;
+                    }
+
+                    ws.Columns().AdjustToContents();
+                    workbook.SaveAs(filePath);
+                }
+
+                MessageBox.Show($"تم تصدير الفواتير إلى:\n{filePath}",
                     "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // فتح الملف في Excel
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = filePath,
@@ -514,11 +541,10 @@ namespace ProManSystem.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ أثناء التصدير: " + ex.Message,
+                MessageBox.Show("خطأ أثناء التصدير إلى Excel: " + ex.Message,
                     "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
 
     }
