@@ -407,44 +407,38 @@ namespace ProManSystem.Views
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((HistoryGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
+            var selectedInvoice = HistoryGrid.SelectedItem as PurchaseInvoice;
+            if (selectedInvoice == null)
             {
-                MessageBox.Show("اختر فاتورة أولاً.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("اختر فاتورة من القائمة أولاً.", "تنبيه",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
+
+            int invoiceId = selectedInvoice.Id;
 
             try
             {
                 string pdfPath = _pdfService.GeneratePurchaseInvoicePdf(invoiceId);
+
                 MessageBox.Show($"تم حفظ الفاتورة بنجاح:\n\n{pdfPath}",
                     "نجح", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 // فتح الملف تلقائياً
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                var processInfo = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = pdfPath,
                     UseShellExecute = true
-                });
+                };
+                System.Diagnostics.Process.Start(processInfo);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ: " + ex.Message, "خطأ", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("خطأ: " + ex.Message, "خطأ",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void EditInvoiceButton_Click(object sender, RoutedEventArgs e)
-        {
-            if ((HistoryGrid.SelectedItem as dynamic)?.Id is not int invoiceId)
-            {
-                MessageBox.Show("اختر فاتورة أولاً.", "تنبيه", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            // فتح نافذة التعديل
-            var editWindow = new PurchaseInvoiceEditWindow(invoiceId, _db);
-            editWindow.ShowDialog();
-            LoadInvoices();
-        }
 
         private void LoadInvoices()
         {
