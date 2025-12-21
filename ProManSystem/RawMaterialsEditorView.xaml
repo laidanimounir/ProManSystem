@@ -66,6 +66,8 @@
     <Grid Margin="15">
         <TabControl>
             
+            <!-- Ajouter / Recherche -->
+           
             <TabItem Header="Ajouter / Recherche" FontSize="13" FontWeight="SemiBold">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid Margin="15">
@@ -165,12 +167,15 @@
                                         </TextBlock>
                                     </Grid>
 
-                                   
+                                    
                                     <TextBlock Grid.Row="2" Grid.Column="0"
                                                Text="Unité :" Style="{StaticResource FieldLabel}"/>
                                     <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
                                         <ComboBox x:Name="UnitComboBox"
                                                   Width="160"
+                                                  IsEditable="True"
+                                                  IsTextSearchEnabled="True"
+                                                  StaysOpenOnEdit="True"
                                                   Style="{StaticResource ModernComboBox}"/>
                                         <Button Content="+"
                                                 Width="32" Margin="8,0,0,0"
@@ -179,12 +184,15 @@
                                                 Style="{StaticResource ModernButton}"/>
                                     </StackPanel>
 
-                                   
+                                    
                                     <TextBlock Grid.Row="3" Grid.Column="0"
                                                Text="Stock initial :" Style="{StaticResource FieldLabel}"/>
                                     <TextBox x:Name="StockInitialTextBox"
                                              Grid.Row="3" Grid.Column="1"
                                              Width="120" HorizontalAlignment="Left"
+                                             IsReadOnly="True"
+                                             Background="#F7FAFC"
+                                             ToolTip="Toujours 0. Ajoutez du stock via facture d'achat."
                                              Style="{StaticResource ModernTextBox}"/>
 
                                     
@@ -194,9 +202,10 @@
                                     <TextBox x:Name="StockMinTextBox"
                                              Grid.Row="3" Grid.Column="3"
                                              Width="120" HorizontalAlignment="Left"
+                                             ToolTip="Seuil d'alerte pour cette matière"
                                              Style="{StaticResource ModernTextBox}"/>
 
-                                   
+                                    
                                     <TextBlock Grid.Row="4" Grid.Column="0"
                                                Text="PMAPA (DA) :" Style="{StaticResource FieldLabel}"/>
                                     <TextBox x:Name="PMAPATextBox"
@@ -204,6 +213,7 @@
                                              Width="120" HorizontalAlignment="Left"
                                              IsReadOnly="True" Background="#F7FAFC"
                                              Text="0.00"
+                                             ToolTip="Calculé automatiquement lors des achats"
                                              Style="{StaticResource ModernTextBox}"/>
 
                                     
@@ -272,7 +282,7 @@
                                     </Grid>
                                 </Border>
 
-                               
+                                
                                 <DataGrid x:Name="RawMaterialsGrid"
                                           Grid.Row="2"
                                           AutoGenerateColumns="False"
@@ -298,8 +308,9 @@
                                                     <Setter Property="Foreground" Value="#22543D"/>
                                                 </Trigger>
                                                 
-                                                <DataTrigger Binding="{Binding StockActuel}" Value="0">
-                                                    <Setter Property="Foreground" Value="#C53030"/>
+                                                <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                                    <Setter Property="Background" Value="#FFF3CD"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -317,11 +328,22 @@
 
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Code" Binding="{Binding CodeMatiere}" Width="80"/>
-                                        <DataGridTextColumn Header="Désignation" Binding="{Binding Designation}" Width="200"/>
+                                        <DataGridTextColumn Header="Désignation" Binding="{Binding Designation}" Width="*"/>
                                         <DataGridTextColumn Header="Unité" Binding="{Binding Unit.Nom}" Width="90"/>
-                                        <DataGridTextColumn Header="Stock actuel" Binding="{Binding StockActuel}" Width="100"/>
-                                        <DataGridTextColumn Header="Stock min" Binding="{Binding StockMin}" Width="90"/>
-                                        <DataGridTextColumn Header="PMAPA" Binding="{Binding PMAPA}" Width="90"/>
+                                        <DataGridTextColumn Header="Stock actuel" Binding="{Binding StockActuel, StringFormat={}{0:N2}}" Width="100"/>
+                                        <DataGridTextColumn Header="Stock min" Binding="{Binding StockMin, StringFormat={}{0:N2}}" Width="90"/>
+                                        <DataGridTextColumn Header="PMAPA" Binding="{Binding PMAPA, StringFormat={}{0:N4}}" Width="90"/>
+                                        <DataGridTemplateColumn Header="Action" Width="70">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="🗑️" Width="36" Height="28"
+                                                            Background="#E53E3E" Foreground="White"
+                                                            ToolTip="Supprimer cette matière"
+                                                            Click="DeleteMaterialButton_Click"
+                                                            Style="{StaticResource ModernButton}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>
@@ -331,7 +353,9 @@
             </TabItem>
 
             
-            <TabItem Header="Gestion / Détails" FontSize="13" FontWeight="SemiBold" Height="23" Margin="-2,-2,-2,0" VerticalAlignment="Top">
+            <!--Gestion / Détails -->
+            
+            <TabItem Header="Gestion / Détails" FontSize="13" FontWeight="SemiBold">
                 <Grid Margin="15">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -359,16 +383,11 @@
                                         Background="#38A169"
                                         Click="ManageSearchButton_Click"
                                         Style="{StaticResource ModernButton}"/>
-                                <Button Content="✏️ Modifier"
-                                        Width="110"
-                                        Background="#2F855A"
-                                        Click="OpenEditDialogButton_Click"
-                                        Style="{StaticResource ModernButton}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
 
-                    
+                   
                     <Border Grid.Row="2" Background="White"
                             BorderBrush="#E0E0E0" BorderThickness="1"
                             CornerRadius="8" Padding="16">
@@ -383,6 +402,19 @@
                                   AlternatingRowBackground="#F7FAFC"
                                   RowHeight="34">
 
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="FontSize" Value="12.5"/>
+                                    <Setter Property="Background" Value="White"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                            <Setter Property="Background" Value="#FFF3CD"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="#2D3748"/>
@@ -395,11 +427,22 @@
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Code" Binding="{Binding CodeMatiere}" Width="80"/>
-                                <DataGridTextColumn Header="Désignation" Binding="{Binding Designation}" Width="220"/>
+                                <DataGridTextColumn Header="Désignation" Binding="{Binding Designation}" Width="*"/>
                                 <DataGridTextColumn Header="Unité" Binding="{Binding Unit.Nom}" Width="90"/>
-                                <DataGridTextColumn Header="Stock actuel" Binding="{Binding StockActuel}" Width="100"/>
-                                <DataGridTextColumn Header="Stock min" Binding="{Binding StockMin}" Width="90"/>
-                                <DataGridTextColumn Header="PMAPA" Binding="{Binding PMAPA}" Width="90"/>
+                                <DataGridTextColumn Header="Stock actuel" Binding="{Binding StockActuel, StringFormat={}{0:N2}}" Width="100"/>
+                                <DataGridTextColumn Header="Stock min" Binding="{Binding StockMin, StringFormat={}{0:N2}}" Width="90"/>
+                                <DataGridTextColumn Header="PMAPA" Binding="{Binding PMAPA, StringFormat={}{0:N4}}" Width="90"/>
+                                <DataGridTemplateColumn Header="Action" Width="70">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="🗑️" Width="36" Height="28"
+                                                    Background="#E53E3E" Foreground="White"
+                                                    ToolTip="Supprimer cette matière"
+                                                    Click="DeleteMaterialButton_Click"
+                                                    Style="{StaticResource ModernButton}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Border>

@@ -59,6 +59,8 @@
     <Grid Margin="15">
         <TabControl>
             
+            <!-- Nouvelle facture d'achat -->
+            
             <TabItem FontSize="13" FontWeight="SemiBold">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
@@ -77,6 +79,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
+                        
                         <Border Grid.Row="0" Background="#F0FFF4" 
                                 BorderBrush="#38A169" BorderThickness="2"
                                 CornerRadius="8" Padding="15">
@@ -95,7 +98,7 @@
                             </StackPanel>
                         </Border>
 
-                      
+                        
                         <Border Grid.Row="2" Background="White"
                                 BorderBrush="#E2E8F0" BorderThickness="1"
                                 CornerRadius="8" Padding="15">
@@ -130,7 +133,7 @@
                             </Grid>
                         </Border>
 
-                       
+                        
                         <Border Grid.Row="4" Background="White"
                                 BorderBrush="#38A169" BorderThickness="3"
                                 CornerRadius="10" Padding="20">
@@ -186,7 +189,7 @@
                                     </Border>
                                 </Grid>
 
-                              
+                                
                                 <Grid Grid.Row="2">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -194,7 +197,7 @@
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
 
-                                    
+                                   
                                     <Grid Grid.Row="0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -236,7 +239,7 @@
                                             </StackPanel>
                                         </StackPanel>
 
-                                        
+                                       
                                         <StackPanel Grid.Column="2">
                                             <TextBlock Text="🏭 Fournisseur et options" 
                                                        FontSize="14" FontWeight="Bold" Foreground="#2D3748" Margin="0,0,0,12"/>
@@ -335,9 +338,9 @@
                                                     <DataGridTextColumn Header="Code" Binding="{Binding RawMaterial.CodeMatiere}" Width="90"/>
                                                     <DataGridTextColumn Header="Matière première" Binding="{Binding RawMaterial.Designation}" Width="*"/>
                                                     <DataGridTextColumn Header="Unité" Binding="{Binding RawMaterial.Unit.Nom}" Width="80"/>
-                                                    <DataGridTextColumn Header="Qté" Binding="{Binding Quantite}" Width="80"/>
-                                                    <DataGridTextColumn Header="Prix U.(DA)" Binding="{Binding PrixUnitaire, StringFormat=N2}" Width="110"/>
-                                                    <DataGridTextColumn Header="Total (DA)" Binding="{Binding MontantLigne, StringFormat=N2}" Width="110"/>
+                                                    <DataGridTextColumn Header="Qté" Binding="{Binding Quantite, StringFormat={}{0:N2}}" Width="80"/>
+                                                    <DataGridTextColumn Header="Prix U.(DA)" Binding="{Binding PrixUnitaire, StringFormat={}{0:N2}}" Width="110"/>
+                                                    <DataGridTextColumn Header="Total (DA)" Binding="{Binding MontantLigne, StringFormat={}{0:N2}}" Width="110"/>
                                                     <DataGridTemplateColumn Header="Action" Width="70">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
@@ -417,6 +420,8 @@
                 </ScrollViewer>
             </TabItem>
 
+           
+            <!-- Historique -->
             
             <TabItem FontSize="13" FontWeight="SemiBold">
                 <TabItem.Header>
@@ -490,42 +495,8 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="N°" Binding="{Binding NumeroFacture}" Width="100"/>
                                 <DataGridTextColumn Header="Fournisseur" Binding="{Binding Supplier.Designation}" Width="*"/>
-                                <DataGridTextColumn Header="Date" Binding="{Binding DateFacture, StringFormat=dd/MM/yyyy}" Width="110"/>
-                                <DataGridTextColumn Header="Montant TTC" Binding="{Binding MontantTTC, StringFormat=N2}" Width="120"/>
-                                <DataGridTextColumn Header="Payé" Binding="{Binding MontantPaye, StringFormat=N2}" Width="110"/>
-                                <DataGridTextColumn Header="Reste" Binding="{Binding Reste, StringFormat=N2}" Width="110"/>
-                                <DataGridTemplateColumn Header="Statut" Width="110">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Border CornerRadius="4" Padding="8,4" HorizontalAlignment="Center">
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="Background" Value="#FED7D7"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding EstPayee}" Value="True">
-                                                                <Setter Property="Background" Value="#C6F6D5"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
-                                                <TextBlock FontWeight="SemiBold" FontSize="11">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Text" Value="Non payée"/>
-                                                            <Setter Property="Foreground" Value="#C53030"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding EstPayee}" Value="True">
-                                                                    <Setter Property="Text" Value="Payée"/>
-                                                                    <Setter Property="Foreground" Value="#2F855A"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </Border>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Date" Binding="{Binding DateFacture, StringFormat={}{0:dd/MM/yyyy}}" Width="110"/>
+                                <DataGridTextColumn Header="Montant TTC (DA)" Binding="{Binding MontantTTC, StringFormat={}{0:N2}}" Width="150"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Border>

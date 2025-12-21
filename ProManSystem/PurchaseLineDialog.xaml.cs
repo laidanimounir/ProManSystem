@@ -1,9 +1,11 @@
 ﻿using ProManSystem.Data;
 using ProManSystem.Models;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 
 namespace ProManSystem.Views
@@ -19,8 +21,45 @@ namespace ProManSystem.Views
             InitializeComponent();
             LoadMaterials();
 
+            QuantiteTextBox.PreviewTextInput += NumericTextBox_PreviewTextInput;
+            PrixTextBox.PreviewTextInput += NumericTextBox_PreviewTextInput;
+
             QuantiteTextBox.TextChanged += AnyField_TextChanged;
             PrixTextBox.TextChanged += AnyField_TextChanged;
+        }
+
+        private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox == null)
+                return;
+
+            string fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
+
+            if (string.IsNullOrWhiteSpace(e.Text))
+            {
+                e.Handled = false;
+                return;
+            }
+
+            if (e.Text == "." || e.Text == ",")
+            {
+                if (textBox.Text.Contains(".") || textBox.Text.Contains(","))
+                {
+                    e.Handled = true;
+                    return;
+                }
+                e.Handled = false;
+                return;
+            }
+
+            if (!char.IsDigit(e.Text, 0))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            e.Handled = false;
         }
 
         private void LoadMaterials()
@@ -28,7 +67,7 @@ namespace ProManSystem.Views
             try
             {
                 var mats = _db.RawMaterials
-                    .Include(m=>m.Unit)
+                    .Include(m => m.Unit)
                     .OrderBy(m => m.CodeMatiere)
                     .ToList();
 
@@ -43,16 +82,20 @@ namespace ProManSystem.Views
 
         private void AnyField_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var qTxt = (QuantiteTextBox.Text ?? "0").Replace('.', ',');
-            var pTxt = (PrixTextBox.Text ?? "0").Replace('.', ',');
+            var qTxt = (QuantiteTextBox.Text ?? "0").Replace(',', '.');
+            var pTxt = (PrixTextBox.Text ?? "0").Replace(',', '.');
 
-            if (!decimal.TryParse(qTxt, out var q))
+            decimal q = 0;
+            decimal p = 0;
+
+            if (!decimal.TryParse(qTxt, NumberStyles.Any, CultureInfo.InvariantCulture, out q))
                 q = 0;
-            if (!decimal.TryParse(pTxt, out var p))
+
+            if (!decimal.TryParse(pTxt, NumberStyles.Any, CultureInfo.InvariantCulture, out p))
                 p = 0;
 
             var total = q * p;
-            TotalTextBox.Text = total.ToString("0.00");
+            TotalTextBox.Text = total.ToString("0.00", CultureInfo.InvariantCulture);
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -61,23 +104,31 @@ namespace ProManSystem.Views
             {
                 MessageBox.Show("اختر مادة أولاً.", "Validation",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                MaterialComboBox.Focus();
                 return;
             }
 
-            var qTxt = (QuantiteTextBox.Text ?? "").Replace('.', ',');
-            var pTxt = (PrixTextBox.Text ?? "").Replace('.', ',');
+            var qTxt = (QuantiteTextBox.Text ?? "").Replace(',', '.');
+            var pTxt = (PrixTextBox.Text ?? "").Replace(',', '.');
 
-            if (!decimal.TryParse(qTxt, out var q) || q <= 0)
+            decimal q = 0;
+            decimal p = 0;
+
+            if (!decimal.TryParse(qTxt, NumberStyles.Any, CultureInfo.InvariantCulture, out q) || q <= 0)
             {
-                MessageBox.Show("الكمية غير صحيحة.", "Validation",
+                MessageBox.Show("الكمية غير صحيحة. يجب أن تكون أكبر من صفر.", "Validation",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                QuantiteTextBox.Focus();
+                QuantiteTextBox.SelectAll();
                 return;
             }
 
-            if (!decimal.TryParse(pTxt, out var p) || p < 0)
+            if (!decimal.TryParse(pTxt, NumberStyles.Any, CultureInfo.InvariantCulture, out p) || p < 0)
             {
                 MessageBox.Show("السعر غير صحيح.", "Validation",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                PrixTextBox.Focus();
+                PrixTextBox.SelectAll();
                 return;
             }
 
@@ -87,7 +138,7 @@ namespace ProManSystem.Views
                 RawMaterial = mat,
                 Quantite = q,
                 PrixUnitaire = p,
-                MontantLigne = q * p
+                MontantLigne = Math.Round(q * p, 2)
             };
 
             DialogResult = true;
@@ -98,6 +149,13 @@ namespace ProManSystem.Views
         {
             DialogResult = false;
             Close();
+        }
+
+
+        private void MaterialComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // حالياً لا نحتاج منطق خاص عند تغيير المادة
+           
         }
     }
 }

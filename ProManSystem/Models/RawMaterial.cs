@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ProManSystem.Models
 {
@@ -6,20 +7,22 @@ namespace ProManSystem.Models
     {
         public int Id { get; set; }
 
-        public string CodeMatiere { get; set; } = string.Empty;   
-        public string Designation { get; set; } = string.Empty;   
+        public string CodeMatiere { get; set; } = string.Empty;
+        public string Designation { get; set; } = string.Empty;
 
-        public int? UnitId { get; set; }                          
+        public int? UnitId { get; set; }
         public Unit? Unit { get; set; }
 
-        public decimal StockInitial { get; set; } = 0m;           
-        public decimal StockActuel { get; set; } = 0m;            
-        public decimal StockMin { get; set; } = 0m;               
+        public decimal StockInitial { get; set; } = 0m;
+        public decimal StockActuel { get; set; } = 0m;
+        public decimal StockMin { get; set; } = 0m;
 
-        public decimal PMAPA { get; set; } = 0m;                  
+        public decimal PMAPA { get; set; } = 0m;
 
         public DateTime DateCreation { get; set; } = DateTime.Now;
+
         public ICollection<ProductRecipe> ProductRecipes { get; set; } = new List<ProductRecipe>();
 
+        public bool IsLowStock => StockActuel <= StockMin;
     }
 }

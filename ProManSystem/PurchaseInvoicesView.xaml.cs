@@ -2,6 +2,7 @@
 using ProManSystem.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,15 +23,12 @@ namespace ProManSystem.Views
             InitTvaList();
             LoadHistory();
             PrepareNewInvoice();
-            UpdateStatistics(); 
+            UpdateStatistics();
 
             LinesGrid.ItemsSource = _lines;
             HistoryGrid.ItemsSource = _history;
         }
 
-       
-    
-       
         private void UpdateStatistics()
         {
             try
@@ -38,38 +36,36 @@ namespace ProManSystem.Views
                 var firstDayOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
-              
                 var monthPurchases = _db.PurchaseInvoices
                     .Where(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth)
                     .Sum(f => (decimal?)f.MontantTTC) ?? 0m;
 
-               
                 var lastOrder = _db.PurchaseInvoices
                     .Where(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth)
                     .OrderByDescending(f => f.DateFacture)
                     .Select(f => (decimal?)f.MontantTTC)
                     .FirstOrDefault() ?? 0m;
 
-               
                 var invoiceCount = _db.PurchaseInvoices
                     .Count(f => f.DateFacture >= firstDayOfMonth && f.DateFacture <= lastDayOfMonth);
 
-               
                 if (StatsMonthPurchases != null)
-                    StatsMonthPurchases.Text = $"{monthPurchases:N2} DA";
+                    StatsMonthPurchases.Text = monthPurchases.ToString("N2", CultureInfo.InvariantCulture) + " DA";
 
                 if (StatsLastOrder != null)
-                    StatsLastOrder.Text = $"{lastOrder:N2} DA";
+                    StatsLastOrder.Text = lastOrder.ToString("N2", CultureInfo.InvariantCulture) + " DA";
 
                 if (StatsInvoiceCount != null)
                     StatsInvoiceCount.Text = invoiceCount.ToString();
             }
             catch (Exception ex)
             {
-                
-                if (StatsMonthPurchases != null) StatsMonthPurchases.Text = "0.00 DA";
-                if (StatsLastOrder != null) StatsLastOrder.Text = "0.00 DA";
-                if (StatsInvoiceCount != null) StatsInvoiceCount.Text = "0";
+                if (StatsMonthPurchases != null)
+                    StatsMonthPurchases.Text = "0.00 DA";
+                if (StatsLastOrder != null)
+                    StatsLastOrder.Text = "0.00 DA";
+                if (StatsInvoiceCount != null)
+                    StatsInvoiceCount.Text = "0";
             }
         }
 
@@ -78,20 +74,25 @@ namespace ProManSystem.Views
             var defaultRates = new[] { 19m, 9m, 0m };
 
             foreach (var r in defaultRates)
-                TvaComboBox.Items.Add(r.ToString("0.##"));
+                TvaComboBox.Items.Add(r.ToString("0.##", CultureInfo.InvariantCulture));
 
             TvaComboBox.Text = "19";
         }
 
         private decimal GetTvaRate()
         {
-            var txt = (TvaComboBox.Text ?? "0").Replace('.', ',');
-            return decimal.TryParse(txt, out var t) ? t : 0m;
+            var txt = (TvaComboBox.Text ?? "0").Replace(',', '.');
+
+            if (decimal.TryParse(txt, NumberStyles.Any, CultureInfo.InvariantCulture, out var t))
+                return t;
+
+            return 0m;
         }
 
         private void SaveTvaButton_Click(object sender, RoutedEventArgs e)
         {
             var txt = (TvaComboBox.Text ?? "").Trim();
+
             if (string.IsNullOrWhiteSpace(txt))
                 return;
 
@@ -158,8 +159,10 @@ namespace ProManSystem.Views
 
         private void AddLineButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new PurchaseLineDialog();
-            dialog.Owner = Application.Current.MainWindow;
+            var dialog = new PurchaseLineDialog
+            {
+                Owner = Application.Current.MainWindow
+            };
 
             if (dialog.ShowDialog() == true && dialog.CreatedLine != null)
             {
@@ -184,9 +187,9 @@ namespace ProManSystem.Views
             decimal tva = Math.Round(ht * tvaRate, 2);
             decimal ttc = ht + tva;
 
-            MontantHTTextBox.Text = ht.ToString("0.00");
-            MontantTVATextBox.Text = tva.ToString("0.00");
-            MontantTTCTextBox.Text = ttc.ToString("0.00");
+            MontantHTTextBox.Text = ht.ToString("0.00", CultureInfo.InvariantCulture);
+            MontantTVATextBox.Text = tva.ToString("0.00", CultureInfo.InvariantCulture);
+            MontantTTCTextBox.Text = ttc.ToString("0.00", CultureInfo.InvariantCulture);
         }
 
         private void SaveInvoiceButton_Click(object sender, RoutedEventArgs e)
@@ -212,9 +215,9 @@ namespace ProManSystem.Views
                 return;
             }
 
-            decimal ht = decimal.Parse(MontantHTTextBox.Text.Replace('.', ','));
-            decimal tva = decimal.Parse(MontantTVATextBox.Text.Replace('.', ','));
-            decimal ttc = decimal.Parse(MontantTTCTextBox.Text.Replace('.', ','));
+            decimal ht = decimal.Parse(MontantHTTextBox.Text, CultureInfo.InvariantCulture);
+            decimal tva = decimal.Parse(MontantTVATextBox.Text, CultureInfo.InvariantCulture);
+            decimal ttc = decimal.Parse(MontantTTCTextBox.Text, CultureInfo.InvariantCulture);
             decimal tvaRate = GetTvaRate();
 
             try
@@ -247,18 +250,20 @@ namespace ProManSystem.Views
 
                 _db.PurchaseInvoices.Add(invoice);
 
-                
                 foreach (var l in invoice.Lignes)
+                {
                     UpdateStockAndPmapa(l.RawMaterialId, l.Quantite, l.PrixUnitaire);
+                }
 
-              
-                var supplier = _db.Suppliers.First(s => s.Id == invoice.SupplierId);
-                supplier.TotalAchats = (supplier.TotalAchats ?? 0) + invoice.MontantTTC;
-                supplier.Dette = (supplier.Dette ?? 0) + invoice.Reste;
+                var supplier = _db.Suppliers.FirstOrDefault(s => s.Id == invoice.SupplierId);
+                if (supplier != null)
+                {
+                    supplier.TotalAchats = (supplier.TotalAchats ?? 0) + invoice.MontantTTC;
+                    supplier.Dette = (supplier.Dette ?? 0) + invoice.Reste;
+                }
 
                 _db.SaveChanges();
 
-               
                 var savedInvoice = _db.PurchaseInvoices
                     .Where(f => f.Id == invoice.Id)
                     .Select(f => new PurchaseInvoice
@@ -284,31 +289,41 @@ namespace ProManSystem.Views
                     HistoryGrid.Items.Refresh();
                 }
 
-                
                 UpdateStatistics();
 
-                MessageBox.Show("تم حفظ فاتورة الشراء بنجاح.",
+                MessageBox.Show("تم حفظ فاتورة الشراء بنجاح وتحديث مخزون المواد الأولية.",
                     "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 PrepareNewInvoice();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erreur lors de l'enregistrement : " + ex.Message,
+                MessageBox.Show("Erreur lors de l'enregistrement : " + ex.Message + "\n\n" + ex.InnerException?.Message,
                     "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        
         private void UpdateStockAndPmapa(int rawMaterialId, decimal qteAchetee, decimal prixAchat)
         {
-            var mat = _db.RawMaterials.First(m => m.Id == rawMaterialId);
+            var mat = _db.RawMaterials.FirstOrDefault(m => m.Id == rawMaterialId);
+            if (mat == null)
+                return;
 
             decimal stockAncien = mat.StockActuel;
             decimal pmapaAncien = mat.PMAPA;
 
+           
+            if (stockAncien <= 0 || pmapaAncien <= 0)
+            {
+                mat.StockActuel = qteAchetee;
+                mat.PMAPA = prixAchat;
+                return;
+            }
+
+           
             decimal stockNouveau = stockAncien + qteAchetee;
 
+            
             if (stockNouveau <= 0)
             {
                 mat.StockActuel = stockNouveau;
@@ -361,7 +376,6 @@ namespace ProManSystem.Views
         {
             string term = (HistorySearchTextBox.Text ?? "").Trim();
 
-           
             if (term.StartsWith("🔍"))
                 term = term.Replace("🔍 Rechercher par N°, fournisseur, date...", "").Trim();
 
@@ -383,7 +397,7 @@ namespace ProManSystem.Views
 
         private void HistoryGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            // يمكن لاحقاً إضافة عرض تفاصيل الفاتورة المختارة
         }
     }
 }

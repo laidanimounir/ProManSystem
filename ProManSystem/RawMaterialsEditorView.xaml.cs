@@ -2,6 +2,7 @@
 using ProManSystem.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,11 +35,14 @@ namespace ProManSystem.Views
                 {
                     var predefined = new[]
                     {
-                        "Mètre", "Kilogramme", "Pièce", "Litre", "Tonne", "Carton"
+                        "Mètre", "Kilogramme", "Pièce", "Litre", "Tonne", "Carton",
+                        "Gramme", "Centimètre", "Millimètre", "Unité", "Boîte", "Sachet"
                     };
 
                     foreach (var name in predefined)
+                    {
                         _db.Units.Add(new Unit { Nom = name, EstPredefined = true });
+                    }
 
                     _db.SaveChanges();
                 }
@@ -46,7 +50,9 @@ namespace ProManSystem.Views
                 _units = new ObservableCollection<Unit>(_db.Units.OrderBy(u => u.Nom).ToList());
                 UnitComboBox.ItemsSource = _units;
                 UnitComboBox.DisplayMemberPath = "Nom";
-                UnitComboBox.SelectedIndex = 0;
+
+                if (_units.Count > 0)
+                    UnitComboBox.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
@@ -85,6 +91,8 @@ namespace ProManSystem.Views
 
             if (UnitComboBox.Items.Count > 0)
                 UnitComboBox.SelectedIndex = 0;
+
+            DesignationTextBox.Focus();
         }
 
         private string GenerateCode()
@@ -132,14 +140,22 @@ namespace ProManSystem.Views
             {
                 MessageBox.Show("Sélectionnez une unité.",
                     "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                UnitComboBox.Focus();
                 return;
             }
 
-            if (!decimal.TryParse(StockInitialTextBox.Text.Replace('.', ','), out decimal stockIni))
-                stockIni = 0;
-
-            if (!decimal.TryParse(StockMinTextBox.Text.Replace('.', ','), out decimal stockMin))
-                stockMin = 0;
+            decimal stockMin = 0;
+            if (!string.IsNullOrWhiteSpace(StockMinTextBox.Text))
+            {
+                var txt = StockMinTextBox.Text.Replace(',', '.');
+                if (!decimal.TryParse(txt, NumberStyles.Any, CultureInfo.InvariantCulture, out stockMin))
+                {
+                    MessageBox.Show("Stock min invalide.",
+                        "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    StockMinTextBox.Focus();
+                    return;
+                }
+            }
 
             try
             {
@@ -148,8 +164,8 @@ namespace ProManSystem.Views
                     CodeMatiere = CodeMatiereTextBox.Text,
                     Designation = DesignationTextBox.Text.Trim(),
                     UnitId = selectedUnit.Id,
-                    StockInitial = stockIni,
-                    StockActuel = stockIni,
+                    StockInitial = 0m,
+                    StockActuel = 0m,
                     StockMin = stockMin,
                     PMAPA = 0m,
                     DateCreation = DateTime.Now
@@ -158,18 +174,99 @@ namespace ProManSystem.Views
                 _db.RawMaterials.Add(material);
                 _db.SaveChanges();
 
-                _materials.Add(material);
-                RawMaterialsGrid.Items.Refresh();
-                ManageRawMaterialsGrid.Items.Refresh();
+                var savedMaterial = _db.RawMaterials
+                    .Where(m => m.Id == material.Id)
+                    .Select(m => new RawMaterial
+                    {
+                        Id = m.Id,
+                        CodeMatiere = m.CodeMatiere,
+                        Designation = m.Designation,
+                        UnitId = m.UnitId,
+                        Unit = m.Unit,
+                        StockInitial = m.StockInitial,
+                        StockActuel = m.StockActuel,
+                        StockMin = m.StockMin,
+                        PMAPA = m.PMAPA,
+                        DateCreation = m.DateCreation
+                    })
+                    .FirstOrDefault();
 
-                MessageBox.Show("Matière enregistrée avec succès.",
+                if (savedMaterial != null)
+                {
+                    _materials.Add(savedMaterial);
+                    RawMaterialsGrid.Items.Refresh();
+                    ManageRawMaterialsGrid.Items.Refresh();
+                }
+
+                MessageBox.Show("Matière enregistrée avec succès.\n\nAjoutez du stock via 'Factures achat'.",
                     "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 PrepareNewMaterial();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erreur lors de l'enregistrement : " + ex.Message,
+                MessageBox.Show("Erreur lors de l'enregistrement : " + ex.Message + "\n\n" + ex.InnerException?.Message,
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void DeleteMaterialButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.DataContext is not RawMaterial material)
+                return;
+
+            var result = MessageBox.Show(
+                $"Voulez-vous vraiment supprimer la matière :\n\n{material.CodeMatiere} - {material.Designation}\n\nCette action est irréversible.",
+                "Confirmation de suppression",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                var hasRecipes = _db.ProductRecipes.Any(pr => pr.RawMaterialId == material.Id);
+                if (hasRecipes)
+                {
+                    MessageBox.Show(
+                        "Cette matière est utilisée dans des recettes de produits.\n\nSupprimez d'abord les recettes associées.",
+                        "Suppression impossible",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
+                var hasPurchases = _db.PurchaseInvoiceLines.Any(l => l.RawMaterialId == material.Id);
+                if (hasPurchases)
+                {
+                    var confirm = MessageBox.Show(
+                        "Cette matière a des historiques d'achats.\n\nVoulez-vous vraiment la supprimer ?",
+                        "Confirmation",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (confirm != MessageBoxResult.Yes)
+                        return;
+                }
+
+                var dbMaterial = _db.RawMaterials.FirstOrDefault(m => m.Id == material.Id);
+                if (dbMaterial != null)
+                {
+                    _db.RawMaterials.Remove(dbMaterial);
+                    _db.SaveChanges();
+
+                    _materials.Remove(material);
+                    RawMaterialsGrid.Items.Refresh();
+                    ManageRawMaterialsGrid.Items.Refresh();
+
+                    MessageBox.Show("Matière supprimée avec succès.",
+                        "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors de la suppression : " + ex.Message + "\n\n" + ex.InnerException?.Message,
                     "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -216,13 +313,6 @@ namespace ProManSystem.Views
             ManageRawMaterialsGrid.ItemsSource = results;
         }
 
-        private void OpenEditDialogButton_Click(object sender, RoutedEventArgs e)
-        {
-           
-            MessageBox.Show("التعديل التفصيلي للمادة سنضيفه بعد الانتهاء من فواتير الشراء.",
-                "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
         private void AddUnitButton_Click(object sender, RoutedEventArgs e)
         {
             string nom = Microsoft.VisualBasic.Interaction.InputBox(
@@ -231,11 +321,20 @@ namespace ProManSystem.Views
             if (string.IsNullOrWhiteSpace(nom))
                 return;
 
+            nom = nom.Trim();
+
+            if (_units.Any(u => u.Nom.Equals(nom, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show("Cette unité existe déjà.",
+                    "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             try
             {
                 var unit = new Unit
                 {
-                    Nom = nom.Trim(),
+                    Nom = nom,
                     EstPredefined = false
                 };
 
@@ -243,8 +342,17 @@ namespace ProManSystem.Views
                 _db.SaveChanges();
 
                 _units.Add(unit);
+
+                var sortedUnits = _units.OrderBy(u => u.Nom).ToList();
+                _units.Clear();
+                foreach (var u in sortedUnits)
+                    _units.Add(u);
+
                 UnitComboBox.ItemsSource = _units;
                 UnitComboBox.SelectedItem = unit;
+
+                MessageBox.Show("Unité ajoutée avec succès.",
+                    "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
