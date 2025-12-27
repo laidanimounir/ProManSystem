@@ -14,16 +14,15 @@ namespace ProManSystem.Views
     public partial class SalesInvoicesView : UserControl
     {
         private readonly AppDbContext _db = new AppDbContext();
-
         private Customer? _selectedCustomer = null;
         private ObservableCollection<SalesInvoiceLine> _invoiceLines = new();
         private ObservableCollection<ProductWithMaxQuantity> _availableProducts = new();
         private ObservableCollection<RecipeDetail> _selectedProductRecipe = new();
+        private bool _isCalculating = false;
 
         public SalesInvoicesView()
         {
             InitializeComponent();
-
             this.Loaded += SalesInvoicesView_Loaded;
         }
 
@@ -34,26 +33,24 @@ namespace ProManSystem.Views
                 InitTvaList();
                 PrepareNewInvoice();
                 LoadAvailableProducts();
-
                 InvoiceLinesGrid.ItemsSource = _invoiceLines;
                 AvailableProductsGrid.ItemsSource = _availableProducts;
                 ProductRecipeGrid.ItemsSource = _selectedProductRecipe;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطأ في التحميل: {ex.Message}", "خطأ",
+                MessageBox.Show($"Erreur de chargement: {ex.Message}", "Erreur",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        
+        #region Initialization
+
         private void InitTvaList()
         {
             var defaultRates = new[] { 19m, 9m, 0m };
-
             foreach (var rate in defaultRates)
                 TvaComboBox.Items.Add(rate.ToString("0.##"));
-
             TvaComboBox.Text = "19";
         }
 
@@ -63,7 +60,6 @@ namespace ProManSystem.Views
             return decimal.TryParse(txt, out var t) ? t : 0m;
         }
 
-       
         private void PrepareNewInvoice()
         {
             if (NumeroFactureTextBox != null)
@@ -79,7 +75,28 @@ namespace ProManSystem.Views
 
             _invoiceLines.Clear();
 
+          
+            if (RemisePourcentageRadio != null)
+                RemisePourcentageRadio.IsChecked = false;
+
+            if (RemiseFixeRadio != null)
+                RemiseFixeRadio.IsChecked = false;
+
+            if (RemisePourcentageTextBox != null)
+                RemisePourcentageTextBox.Text = "0";
+
+            if (RemiseFixeTextBox != null)
+                RemiseFixeTextBox.Text = "0";
+
+            if (RemiseMontantTextBlock != null)
+                RemiseMontantTextBlock.Text = "0.00 DA";
+
+           
+            if (ReglementEspeceRadio != null)
+                ReglementEspeceRadio.IsChecked = true;
+
             if (MontantHTTextBox != null) MontantHTTextBox.Text = "0.00";
+            if (NetHTTextBox != null) NetHTTextBox.Text = "0.00";
             if (MontantTVATextBox != null) MontantTVATextBox.Text = "0.00";
             if (MontantTTCTextBox != null) MontantTTCTextBox.Text = "0.00";
         }
@@ -110,23 +127,24 @@ namespace ProManSystem.Views
             }
         }
 
-  
+        #endregion
+
+        #region Products Management
+
         private void LoadAvailableProducts()
         {
             try
             {
                 var products = _db.Products
-     .Include(p => p.ProductRecipes)
-         .ThenInclude(pr => pr.RawMaterial)
-     .OrderBy(p => p.CodeProduit)
-     .ToList();
+                    .Include(p => p.ProductRecipes)
+                    .ThenInclude(pr => pr.RawMaterial)
+                    .OrderBy(p => p.CodeProduit)
+                    .ToList();
 
                 _availableProducts.Clear();
-
                 foreach (var product in products)
                 {
                     decimal maxQty = CalculateMaxQuantityFromRawMaterials(product);
-
                     _availableProducts.Add(new ProductWithMaxQuantity
                     {
                         Id = product.Id,
@@ -140,7 +158,7 @@ namespace ProManSystem.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطأ في تحميل المنتجات: {ex.Message}", "خطأ",
+                MessageBox.Show($"Erreur de chargement des produits: {ex.Message}", "Erreur",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -150,7 +168,6 @@ namespace ProManSystem.Views
             if (product.ProductRecipes == null)
                 return 0m;
 
-          
             var validRecipes = product.ProductRecipes
                 .Where(r => r.RawMaterial != null && r.QuantiteNecessaire > 0 && r.RawMaterial.StockActuel > 0)
                 .ToList();
@@ -158,16 +175,12 @@ namespace ProManSystem.Views
             if (!validRecipes.Any())
                 return 0m;
 
-            
             var possibleQuantities = validRecipes
                 .Select(r => r.RawMaterial.StockActuel / r.QuantiteNecessaire);
 
-
             var maxQty = possibleQuantities.Min();
-
             return Math.Floor(maxQty);
         }
-
 
         private void AvailableProductsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -175,7 +188,7 @@ namespace ProManSystem.Views
             {
                 _selectedProductRecipe.Clear();
                 if (RecipeHeaderTextBlock != null)
-                    RecipeHeaderTextBlock.Text = "📋 وصفة المنتج (اختر منتج من القائمة)";
+                    RecipeHeaderTextBlock.Text = "📋 Recette du Produit";
                 return;
             }
 
@@ -187,9 +200,8 @@ namespace ProManSystem.Views
             try
             {
                 _selectedProductRecipe.Clear();
-
                 if (RecipeHeaderTextBlock != null)
-                    RecipeHeaderTextBlock.Text = $"📋 وصفة المنتج: {product.Nom}";
+                    RecipeHeaderTextBlock.Text = $"📋 Recette: {product.Nom}";
 
                 var recipes = _db.ProductRecipes
                     .Include(pr => pr.RawMaterial)
@@ -198,8 +210,8 @@ namespace ProManSystem.Views
 
                 if (!recipes.Any())
                 {
-                    MessageBox.Show("هذا المنتج ليس له وصفة محددة!", "تنبيه",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Ce produit n'a pas de recette définie!", "Information",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
@@ -223,12 +235,11 @@ namespace ProManSystem.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطأ في تحميل الوصفة: {ex.Message}", "خطأ",
+                MessageBox.Show($"Erreur de chargement de la recette: {ex.Message}", "Erreur",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-      
         private void AvailableProductsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (AvailableProductsGrid.SelectedItem is not ProductWithMaxQuantity selectedProduct)
@@ -236,12 +247,11 @@ namespace ProManSystem.Views
 
             if (selectedProduct.MaxQuantity <= 0)
             {
-                MessageBox.Show("لا يمكن بيع هذا المنتج - المواد الأولية غير كافية!", "تنبيه",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Impossible de vendre ce produit - stock de matières premières insuffisant!",
+                    "Attention", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            
             var dialog = new QuantityInputDialog(selectedProduct.MaxQuantity)
             {
                 Owner = Window.GetWindow(this)
@@ -254,9 +264,9 @@ namespace ProManSystem.Views
                 if (requestedQty > selectedProduct.MaxQuantity)
                 {
                     var result = MessageBox.Show(
-                        $"الكمية المطلوبة ({requestedQty}) أكبر من المتاح ({selectedProduct.MaxQuantity}).\n" +
-                        $"هل تريد المتابعة؟ (سيكون المخزون سالب)",
-                        "تحذير",
+                        $"La quantité demandée ({requestedQty}) est supérieure au maximum ({selectedProduct.MaxQuantity}).\n" +
+                        $"Voulez-vous continuer? (Le stock sera négatif)",
+                        "Avertissement",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
 
@@ -283,7 +293,6 @@ namespace ProManSystem.Views
             RecalculateTotals();
         }
 
-    
         private void DeleteLineButton_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.DataContext is SalesInvoiceLine line)
@@ -293,20 +302,166 @@ namespace ProManSystem.Views
             }
         }
 
-  
+        #endregion
+
+        #region Calculations with Remise
+
         private void RecalculateTotals()
         {
-            decimal ht = _invoiceLines.Sum(l => l.MontantLigne);
-            decimal tvaRate = GetTvaRate() / 100m;
-            decimal tva = Math.Round(ht * tvaRate, 2);
-            decimal ttc = ht + tva;
+            if (_isCalculating) return;
+            _isCalculating = true;
 
-            if (MontantHTTextBox != null)
-                MontantHTTextBox.Text = ht.ToString("0.00");
-            if (MontantTVATextBox != null)
-                MontantTVATextBox.Text = tva.ToString("0.00");
-            if (MontantTTCTextBox != null)
-                MontantTTCTextBox.Text = ttc.ToString("0.00");
+            try
+            {
+                
+                decimal totalHT = _invoiceLines.Sum(l => l.MontantLigne);
+
+                if (MontantHTTextBox != null)
+                    MontantHTTextBox.Text = totalHT.ToString("N2");
+
+                
+                decimal remiseMontant = CalculateRemiseMontant(totalHT);
+
+                if (RemiseMontantTextBlock != null)
+                    RemiseMontantTextBlock.Text = remiseMontant.ToString("N2") + " DA";
+
+             
+                decimal netHT = totalHT - remiseMontant;
+
+                if (NetHTTextBox != null)
+                    NetHTTextBox.Text = netHT.ToString("N2");
+
+               
+                decimal tvaRate = GetTvaRate() / 100m;
+                decimal tva = Math.Round(netHT * tvaRate, 2);
+
+                if (MontantTVATextBox != null)
+                    MontantTVATextBox.Text = tva.ToString("N2");
+
+               
+                decimal ttc = netHT + tva;
+
+                if (MontantTTCTextBox != null)
+                    MontantTTCTextBox.Text = ttc.ToString("N2");
+            }
+            finally
+            {
+                _isCalculating = false;
+            }
+        }
+
+        private decimal CalculateRemiseMontant(decimal totalHT)
+        {
+            if (totalHT <= 0)
+                return 0m;
+
+            if (RemisePourcentageRadio?.IsChecked == true)
+            {
+                if (decimal.TryParse(RemisePourcentageTextBox.Text.Replace(',', '.'),
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out decimal percentage))
+                {
+                    return Math.Round(totalHT * (percentage / 100m), 2);
+                }
+            }
+            else if (RemiseFixeRadio?.IsChecked == true)
+            {
+                if (decimal.TryParse(RemiseFixeTextBox.Text.Replace(',', '.'),
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out decimal fixedAmount))
+                {
+                    return Math.Round(fixedAmount, 2);
+                }
+            }
+
+            return 0m;
+        }
+
+        private void RemiseType_Changed(object sender, RoutedEventArgs e)
+        {
+            RecalculateTotals();
+        }
+
+        private void RemisePourcentageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isCalculating) return;
+            if (RemisePourcentageRadio?.IsChecked == true)
+            {
+                RecalculateTotals();
+            }
+        }
+
+        private void RemiseFixeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isCalculating) return;
+            if (RemiseFixeRadio?.IsChecked == true)
+            {
+                RecalculateTotals();
+            }
+        }
+
+        private void NetHT_Changed(object sender, TextChangedEventArgs e)
+        {
+            if (_isCalculating) return;
+
+           
+            if (MontantHTTextBox == null || NetHTTextBox == null || RemiseMontantTextBlock == null)
+                return;
+
+            if (!decimal.TryParse(MontantHTTextBox.Text.Replace(',', '.'),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out decimal totalHT))
+                return;
+
+            if (!decimal.TryParse(NetHTTextBox.Text.Replace(',', '.'),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out decimal netHT))
+                return;
+
+            if (totalHT <= 0)
+                return;
+
+            _isCalculating = true;
+
+            try
+            {
+                decimal remiseMontant = totalHT - netHT;
+
+                if (remiseMontant < 0)
+                    remiseMontant = 0;
+
+                RemiseMontantTextBlock.Text = remiseMontant.ToString("N2") + " DA";
+
+                
+                if (RemisePourcentageRadio?.IsChecked == true)
+                {
+                    decimal percentage = (remiseMontant / totalHT) * 100m;
+                    RemisePourcentageTextBox.Text = percentage.ToString("N2");
+                }
+                else if (RemiseFixeRadio?.IsChecked == true)
+                {
+                    RemiseFixeTextBox.Text = remiseMontant.ToString("N2");
+                }
+
+              
+                decimal tvaRate = GetTvaRate() / 100m;
+                decimal tva = Math.Round(netHT * tvaRate, 2);
+                decimal ttc = netHT + tva;
+
+                if (MontantTVATextBox != null)
+                    MontantTVATextBox.Text = tva.ToString("N2");
+
+                if (MontantTTCTextBox != null)
+                    MontantTTCTextBox.Text = ttc.ToString("N2");
+            }
+            finally
+            {
+                _isCalculating = false;
+            }
         }
 
         private void TvaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -314,7 +469,10 @@ namespace ProManSystem.Views
             RecalculateTotals();
         }
 
-    
+        #endregion
+
+        #region Customer Selection
+
         private void PickCustomerButton_Click(object sender, RoutedEventArgs e)
         {
             var win = new CustomerPickerWindow
@@ -330,49 +488,95 @@ namespace ProManSystem.Views
             }
         }
 
-      
+        #endregion
+
+        #region Save Invoice
+
         private void SaveInvoiceButton_Click(object sender, RoutedEventArgs e)
         {
-           
             if (_selectedCustomer == null)
             {
-                MessageBox.Show("اختر الزبون أولاً.", "تنبيه",
+                MessageBox.Show("Veuillez sélectionner un client.", "Attention",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (_invoiceLines.Count == 0)
             {
-                MessageBox.Show("أضف منتجات للفاتورة أولاً.", "تنبيه",
+                MessageBox.Show("Veuillez ajouter des produits à la facture.", "Attention",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (!DateFacturePicker.SelectedDate.HasValue)
             {
-                MessageBox.Show("حدد تاريخ الفاتورة.", "تنبيه",
+                MessageBox.Show("Veuillez sélectionner la date de la facture.", "Attention",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-           
-            decimal ht = decimal.Parse(MontantHTTextBox.Text.Replace('.', ','));
-            decimal tva = decimal.Parse(MontantTVATextBox.Text.Replace('.', ','));
-            decimal ttc = decimal.Parse(MontantTTCTextBox.Text.Replace('.', ','));
-            decimal tvaRate = GetTvaRate();
-
             try
             {
+             
+                decimal totalHT = decimal.Parse(MontantHTTextBox.Text.Replace(',', '.'),
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                decimal remiseMontant = decimal.Parse(RemiseMontantTextBlock.Text.Replace(" DA", "").Replace(',', '.'),
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                decimal netHT = decimal.Parse(NetHTTextBox.Text.Replace(',', '.'),
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                decimal tva = decimal.Parse(MontantTVATextBox.Text.Replace(',', '.'),
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                decimal ttc = decimal.Parse(MontantTTCTextBox.Text.Replace(',', '.'),
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                decimal tvaRate = GetTvaRate();
+
+                RemiseType remiseType = RemiseType.Aucune;
+                decimal remiseValeur = 0m;
+
+                if (RemisePourcentageRadio.IsChecked == true)
+                {
+                    remiseType = RemiseType.Pourcentage;
+                    decimal.TryParse(RemisePourcentageTextBox.Text.Replace(',', '.'),
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        out remiseValeur);
+                }
+                else if (RemiseFixeRadio.IsChecked == true)
+                {
+                    remiseType = RemiseType.Fixe;
+                    decimal.TryParse(RemiseFixeTextBox.Text.Replace(',', '.'),
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        out remiseValeur);
+                }
+
+             
+                ModeReglement modeReglement = ModeReglement.Espece;
+                if (ReglementBancaireRadio.IsChecked == true)
+                    modeReglement = ModeReglement.VersementBancaire;
+                else if (ReglementTermeRadio.IsChecked == true)
+                    modeReglement = ModeReglement.ATerme;
+                else if (ReglementMixteRadio.IsChecked == true)
+                    modeReglement = ModeReglement.Mixte;
+
                
                 var invoice = new SalesInvoice
                 {
                     NumeroFacture = NumeroFactureTextBox.Text,
                     CustomerId = _selectedCustomer.Id,
                     DateFacture = DateFacturePicker.SelectedDate.Value,
-                    MontantHT = ht,
+                    TypeRemise = remiseType,
+                    RemiseValeur = remiseValeur,
+                    RemiseMontant = remiseMontant,
+                    MontantHT = totalHT,
+                    NetHT = netHT,
                     TauxTVA = tvaRate,
                     MontantTVA = tva,
                     MontantTTC = ttc,
+                    ModeReglement = modeReglement,
                     MontantPaye = ttc,
                     Reste = 0m,
                     EstPayee = true,
@@ -393,7 +597,7 @@ namespace ProManSystem.Views
 
                 _db.SalesInvoices.Add(invoice);
 
-            
+                // update Raw Materials Stock
                 foreach (var line in invoice.Lignes)
                 {
                     var product = _db.Products
@@ -401,7 +605,6 @@ namespace ProManSystem.Views
                         .ThenInclude(pr => pr.RawMaterial)
                         .First(p => p.Id == line.ProductId);
 
-                   
                     foreach (var recipe in product.ProductRecipes)
                     {
                         var rawMaterial = recipe.RawMaterial;
@@ -409,58 +612,67 @@ namespace ProManSystem.Views
                         rawMaterial.StockActuel -= requiredQty;
                     }
 
-                    
+                    // update Product Stock
                     decimal newProductStock = CalculateMaxQuantityFromRawMaterials(product);
                     product.StockActuel = newProductStock;
                 }
 
-               
+                // update Customer CA
                 var customer = _db.Customers.First(c => c.Id == invoice.CustomerId);
                 customer.CA_TTC = (customer.CA_TTC ?? 0) + invoice.MontantTTC;
 
                 _db.SaveChanges();
 
-                MessageBox.Show("تم حفظ فاتورة البيع بنجاح.", "نجح",
+                MessageBox.Show("Facture enregistrée avec succès!", "Succès",
                     MessageBoxButton.OK, MessageBoxImage.Information);
 
-             
                 PrepareNewInvoice();
                 LoadAvailableProducts();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطأ أثناء الحفظ: {ex.Message}", "خطأ",
+                MessageBox.Show($"Erreur lors de l'enregistrement: {ex.Message}", "Erreur",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-       
-       
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
-            PrepareNewInvoice();
-            LoadAvailableProducts();
+            var result = MessageBox.Show(
+                "Voulez-vous réinitialiser la facture?\n\nToutes les données non enregistrées seront perdues.",
+                "Confirmation",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                PrepareNewInvoice();
+                LoadAvailableProducts();
+            }
         }
-    }
 
-   
-    // كلاسات مساعدة
-  
-    public class ProductWithMaxQuantity
-    {
-        public int Id { get; set; }
-        public string CodeProduit { get; set; } = string.Empty;
-        public string Nom { get; set; } = string.Empty;
-        public decimal PrixVente { get; set; }
-        public decimal MaxQuantity { get; set; }
-        public Product Product { get; set; } = null!;
-    }
+        #endregion
 
-    public class RecipeDetail
-    {
-        public string RawMaterialName { get; set; } = string.Empty;
-        public decimal QuantityPerUnit { get; set; }
-        public decimal AvailableStock { get; set; }
-        public decimal MaxUnits { get; set; }
+        #region Helper Classes
+
+        public class ProductWithMaxQuantity
+        {
+            public int Id { get; set; }
+            public string CodeProduit { get; set; } = string.Empty;
+            public string Nom { get; set; } = string.Empty;
+            public decimal PrixVente { get; set; }
+            public decimal MaxQuantity { get; set; }
+            public Product Product { get; set; } = null!;
+        }
+
+        public class RecipeDetail
+        {
+            public string RawMaterialName { get; set; } = string.Empty;
+            public decimal QuantityPerUnit { get; set; }
+            public decimal AvailableStock { get; set; }
+            public decimal MaxUnits { get; set; }
+        }
+
+        #endregion
     }
 }

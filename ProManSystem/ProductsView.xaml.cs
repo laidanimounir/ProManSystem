@@ -22,14 +22,14 @@ namespace ProManSystem.Views
         private int? _currentProductId = null;
         private bool _isEditMode = false;
         private bool _isCalculating = false;
-        private DispatcherTimer _searchTimer = null!; // ✅ FIXED
+        private DispatcherTimer _searchTimer = null!; 
 
         public ProductsView()
         {
             InitializeComponent();
             this.Loaded += ProductsView_Loaded;
 
-            // Setup search timer for real-time search
+            
             _searchTimer = new DispatcherTimer();
             _searchTimer.Interval = TimeSpan.FromMilliseconds(300);
             _searchTimer.Tick += SearchTimer_Tick;
@@ -237,7 +237,7 @@ namespace ProManSystem.Views
 
                 _db.SaveChanges();
 
-                // Update recipes
+                // update recipes
                 var existing = _db.ProductRecipes
                     .Where(pr => pr.ProductId == product.Id)
                     .ToList();
@@ -396,7 +396,7 @@ namespace ProManSystem.Views
 
         private void ProductsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Optional: Auto-load on selection
+            //  Auto-load on selection
         }
 
         #endregion
@@ -456,7 +456,7 @@ namespace ProManSystem.Views
                 return;
             }
 
-            // Add to recipe
+            // add to recipe
             var newRow = new ProductRecipe
             {
                 ProductId = _currentProductId ?? 0,
@@ -606,7 +606,6 @@ namespace ProManSystem.Views
             }
         }
 
-        // ✅ NEW: Separate handlers for each textbox
         private void MarginPercentageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (_isCalculating) return;
@@ -645,7 +644,7 @@ namespace ProManSystem.Views
 
         private void FinalPrice_Changed(object sender, TextChangedEventArgs e)
         {
-            // Optional: Reverse calculate margin if user manually edits final price
+            //Reverse calculate margin if user manually edits final price
         }
 
         #endregion
