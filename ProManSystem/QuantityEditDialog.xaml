@@ -1,0 +1,126 @@
+﻿<Window x:Class="ProManSystem.Views.QuantityEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Modifier l'Article" 
+        Height="404" 
+        Width="450"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F8FAFC">
+
+    <Window.Resources>
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#1E3A8A"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" CornerRadius="8" Margin="10">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.1"
+                              BlurRadius="15" ShadowDepth="3"/>
+        </Border.Effect>
+
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+          
+            <StackPanel Grid.Row="0">
+                <TextBlock Text="✏️ Modifier l'Article"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#1E293B"
+                           Margin="0,0,0,6"/>
+                <TextBlock x:Name="ProductNameTextBlock"
+                           Text="Produit"
+                           FontSize="13"
+                           Foreground="#64748B"/>
+            </StackPanel>
+
+        
+            <StackPanel Grid.Row="2">
+                <TextBlock Text="📦 Quantité"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="#64748B"
+                           Margin="0,0,0,6"/>
+                <TextBox x:Name="QuantityTextBox"
+                         Style="{StaticResource ModernTextBox}"/>
+            </StackPanel>
+
+            
+            <StackPanel Grid.Row="4">
+                <TextBlock Text="💰 Prix Unitaire (DA)"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="#64748B"
+                           Margin="0,0,0,6"/>
+                <TextBox x:Name="PriceTextBox"
+                         Style="{StaticResource ModernTextBox}"/>
+            </StackPanel>
+
+         
+            <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="❌ Annuler"
+                        Width="110"
+                        Height="40"
+                        Margin="0,0,10,0"
+                        Background="#64748B"
+                        Foreground="White"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Cursor="Hand"
+                        BorderThickness="0"
+                        Click="CancelButton_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Content="✅ Valider"
+                        Width="110"
+                        Height="40"
+                        Background="#10B981"
+                        Foreground="White"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Cursor="Hand"
+                        BorderThickness="0"
+                        Click="OkButton_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
