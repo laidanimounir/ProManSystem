@@ -17,16 +17,13 @@ namespace ProManSystem.Views
         private ObservableCollection<Product> _products = new();
         private ObservableCollection<ProductRecipe> _recipeRows = new();
         private List<RawMaterial> _allRawMaterials = new();
-
         private int? _currentProductId = null;
         private bool _isEditMode = false;
-        private bool _isCalculating = false; 
+        private bool _isCalculating = false;
 
         public ProductsView()
         {
             InitializeComponent();
-
-            
             this.Loaded += ProductsView_Loaded;
         }
 
@@ -36,7 +33,6 @@ namespace ProManSystem.Views
             {
                 LoadProducts();
                 LoadAvailableRawMaterials();
-
                 _recipeRows = new ObservableCollection<ProductRecipe>();
                 RecipeGrid.ItemsSource = _recipeRows;
             }
@@ -47,8 +43,6 @@ namespace ProManSystem.Views
             }
         }
 
-
- 
         private void LoadProducts(string? searchTerm = null)
         {
             IQueryable<Product> query = _db.Products;
@@ -78,7 +72,6 @@ namespace ProManSystem.Views
 
             AvailableRawMaterialsGrid.ItemsSource = _allRawMaterials;
 
-           
             if (RecipeGrid != null && RecipeGrid.Columns.Count > 0)
             {
                 var comboColumn = RecipeGrid.Columns[0] as DataGridComboBoxColumn;
@@ -89,8 +82,6 @@ namespace ProManSystem.Views
             }
         }
 
-
-     
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             string term = (SearchTextBox.Text ?? string.Empty).Trim();
@@ -139,10 +130,9 @@ namespace ProManSystem.Views
         private void ProductsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // يمكن عرض المنتج المختار تلقائيًا أو تركه للمستخدم
-            // حاليًا نتركه فارغًا حتى يضغط على "تعديل"
+            
         }
 
-       
         private void StartNewProduct()
         {
             _currentProductId = null;
@@ -153,30 +143,34 @@ namespace ProManSystem.Views
 
             if (CodeTextBox != null)
                 CodeTextBox.Text = GenerateNextProductCode();
+
             if (NameTextBox != null)
                 NameTextBox.Text = string.Empty;
-            if (DescriptionTextBox != null)
-                DescriptionTextBox.Text = string.Empty;
 
             _recipeRows.Clear();
+
             if (RecipeGrid != null)
                 RecipeGrid.ItemsSource = _recipeRows;
 
             if (ProductionCostTextBlock != null)
                 ProductionCostTextBlock.Text = "0.00";
+
             if (MaxProductionTextBlock != null)
                 MaxProductionTextBlock.Text = "--";
+
             if (MarginPercentageTextBox != null)
                 MarginPercentageTextBox.Text = "30";
+
             if (MarginFixedTextBox != null)
                 MarginFixedTextBox.Text = "0";
+
             if (MarginPercentageRadio != null)
                 MarginPercentageRadio.IsChecked = true;
+
             if (FinalPriceTextBox != null)
                 FinalPriceTextBox.Text = "0";
         }
 
-        
         private void LoadProductForEdit(int productId)
         {
             var product = _db.Products.FirstOrDefault(p => p.Id == productId);
@@ -190,26 +184,23 @@ namespace ProManSystem.Views
 
             if (CodeTextBox != null)
                 CodeTextBox.Text = product.CodeProduit;
+
             if (NameTextBox != null)
                 NameTextBox.Text = product.Nom;
-            if (DescriptionTextBox != null)
-                DescriptionTextBox.Text = product.Description ?? string.Empty;
 
-           
             var recipes = _db.ProductRecipes
                 .Where(pr => pr.ProductId == productId)
                 .OrderBy(pr => pr.Id)
                 .ToList();
 
             _recipeRows = new ObservableCollection<ProductRecipe>(recipes);
+
             if (RecipeGrid != null)
                 RecipeGrid.ItemsSource = _recipeRows;
 
-          
             RecalculatePricing();
         }
 
-      
         private void ClearEditorPanel()
         {
             _currentProductId = null;
@@ -220,25 +211,26 @@ namespace ProManSystem.Views
 
             if (CodeTextBox != null)
                 CodeTextBox.Text = string.Empty;
+
             if (NameTextBox != null)
                 NameTextBox.Text = string.Empty;
-            if (DescriptionTextBox != null)
-                DescriptionTextBox.Text = string.Empty;
 
             if (_recipeRows != null)
                 _recipeRows.Clear();
+
             if (RecipeGrid != null)
                 RecipeGrid.ItemsSource = _recipeRows;
 
             if (ProductionCostTextBlock != null)
                 ProductionCostTextBlock.Text = "0.00";
+
             if (MaxProductionTextBlock != null)
                 MaxProductionTextBlock.Text = "--";
+
             if (FinalPriceTextBox != null)
                 FinalPriceTextBox.Text = "0";
         }
 
-       
         private string GenerateNextProductCode()
         {
             const string prefix = "PR";
@@ -275,7 +267,17 @@ namespace ProManSystem.Views
             return $"{prefix}{formattedNumber}";
         }
 
-       
+      
+        private bool IsProductCodeDuplicate(string code, int? excludeProductId = null)
+        {
+            var query = _db.Products.Where(p => p.CodeProduit == code);
+
+            if (excludeProductId.HasValue)
+                query = query.Where(p => p.Id != excludeProductId.Value);
+
+            return query.Any();
+        }
+
         private void AddRecipeRowButton_Click(object sender, RoutedEventArgs e)
         {
             var newRow = new ProductRecipe
@@ -283,6 +285,7 @@ namespace ProManSystem.Views
                 ProductId = _currentProductId ?? 0,
                 QuantiteNecessaire = 0
             };
+
             _recipeRows.Add(newRow);
             RefreshRecipeGrid();
         }
@@ -294,7 +297,6 @@ namespace ProManSystem.Views
 
             _recipeRows.Remove(row);
             RefreshRecipeGrid();
-           // RecalculatePricing();
         }
 
         private void RefreshRecipeGrid()
@@ -303,7 +305,66 @@ namespace ProManSystem.Views
             RecipeGrid.ItemsSource = _recipeRows;
         }
 
-  
+       
+        private void QuantityTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox == null) return;
+
+            var regex = new Regex(@"^[0-9,\.]+$");
+            e.Handled = !regex.IsMatch(e.Text);
+        }
+
+       
+        private void QuantityTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox == null) return;
+
+            string text = textBox.Text.Replace(',', '.');
+
+            if (decimal.TryParse(text, System.Globalization.NumberStyles.Any,
+                                 System.Globalization.CultureInfo.InvariantCulture,
+                                 out decimal value))
+            {
+                textBox.Text = value.ToString("N3");
+
+                if (textBox.DataContext is ProductRecipe recipe)
+                {
+                    recipe.QuantiteNecessaire = value;
+                    RecalculatePricing();
+                }
+            }
+        }
+
+
+        // ✅ الحل: إضافة فحص null
+        private void RawMaterialSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // فحص أن جميع العناصر المطلوبة موجودة
+            if (RawMaterialSearchTextBox == null || AvailableRawMaterialsGrid == null || _allRawMaterials == null)
+                return;
+
+            string searchTerm = RawMaterialSearchTextBox.Text?.Trim() ?? string.Empty;
+
+            // تجاهل النص الافتراضي (placeholder)
+            if (searchTerm == "🔍 ابحث عن مادة أولية..." || string.IsNullOrWhiteSpace(searchTerm))
+            {
+                AvailableRawMaterialsGrid.ItemsSource = _allRawMaterials;
+            }
+            else
+            {
+                searchTerm = searchTerm.ToLower();
+                var filtered = _allRawMaterials.Where(r =>
+                    (r.CodeMatiere?.ToLower().Contains(searchTerm) ?? false) ||
+                    (r.Designation?.ToLower().Contains(searchTerm) ?? false)
+                ).ToList();
+
+                AvailableRawMaterialsGrid.ItemsSource = filtered;
+            }
+        }
+
+
         private void RecalculateButton_Click(object sender, RoutedEventArgs e)
         {
             RecalculatePricing();
@@ -316,14 +377,12 @@ namespace ProManSystem.Views
 
             try
             {
-               
                 if (ProductionCostTextBlock == null || MaxProductionTextBlock == null)
                 {
                     _isCalculating = false;
                     return;
                 }
 
-                // 1. حساب تكلفة الإنتاج
                 decimal totalCost = 0m;
                 decimal maxProduction = decimal.MaxValue;
 
@@ -352,7 +411,6 @@ namespace ProManSystem.Views
                 else
                     MaxProductionTextBlock.Text = Math.Floor(maxProduction).ToString("N0");
 
-                
                 UpdateFinalPriceFromMargin(totalCost);
             }
             finally
@@ -360,19 +418,18 @@ namespace ProManSystem.Views
                 _isCalculating = false;
             }
         }
-        //  حساب سعر البيع
+
         private void UpdateFinalPriceFromMargin(decimal cost)
         {
             if (_isCalculating) return;
 
-            // فحص جاهزية العناصر - هذا هو الحل الجذري
             if (MarginPercentageRadio == null ||
                 MarginFixedRadio == null ||
                 MarginPercentageTextBox == null ||
                 MarginFixedTextBox == null ||
                 FinalPriceTextBox == null)
             {
-                return; 
+                return;
             }
 
             decimal margin = 0m;
@@ -402,7 +459,6 @@ namespace ProManSystem.Views
             FinalPriceTextBox.Text = finalPrice.ToString("N2");
         }
 
-        
         private void MarginType_Changed(object sender, RoutedEventArgs e)
         {
             if (_isCalculating) return;
@@ -432,13 +488,11 @@ namespace ProManSystem.Views
         private void FinalPrice_Changed(object sender, TextChangedEventArgs e)
         {
             // يمكن إضافة منطق لإعادة حساب الهامش إذا تم تعديل السعر يدويًا
-            // الآن يبقى بسيط
+           
         }
 
-        
         private void SaveProductButton_Click(object sender, RoutedEventArgs e)
         {
-            
             if (string.IsNullOrWhiteSpace(CodeTextBox.Text) ||
                 string.IsNullOrWhiteSpace(NameTextBox.Text))
             {
@@ -448,6 +502,14 @@ namespace ProManSystem.Views
             }
 
             
+            string newCode = CodeTextBox.Text.Trim();
+            if (IsProductCodeDuplicate(newCode, _currentProductId))
+            {
+                MessageBox.Show("كود المنتج موجود مسبقاً. الرجاء استخدام كود آخر.", "تنبيه",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (_recipeRows.Any(r => r.RawMaterialId == 0))
             {
                 MessageBox.Show("الرجاء اختيار مادة أولية لكل سطر في الوصفة.", "تنبيه",
@@ -455,20 +517,18 @@ namespace ProManSystem.Views
                 return;
             }
 
-           
             if (!decimal.TryParse(FinalPriceTextBox.Text.Replace(',', '.'),
-                    System.Globalization.NumberStyles.Any,
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    out decimal finalPrice))
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out decimal finalPrice))
             {
                 finalPrice = 0;
             }
 
-           
             if (!decimal.TryParse(ProductionCostTextBlock.Text.Replace(',', '.'),
-                    System.Globalization.NumberStyles.Any,
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    out decimal cost))
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out decimal cost))
             {
                 cost = 0;
             }
@@ -479,12 +539,10 @@ namespace ProManSystem.Views
 
                 if (_isEditMode && _currentProductId.HasValue)
                 {
-                  
                     product = _db.Products.First(x => x.Id == _currentProductId.Value);
                 }
                 else
                 {
-                 
                     product = new Product
                     {
                         DateCreation = DateTime.Now
@@ -494,20 +552,16 @@ namespace ProManSystem.Views
 
                 product.CodeProduit = CodeTextBox.Text.Trim();
                 product.Nom = NameTextBox.Text.Trim();
-                product.Description = string.IsNullOrWhiteSpace(DescriptionTextBox.Text)
-                    ? null
-                    : DescriptionTextBox.Text.Trim();
                 product.PrixVente = finalPrice;
                 product.CoutProduction = cost;
                 product.Marge = finalPrice - cost;
 
-                // حفظ المنتج أولاً للحصول على Id
                 _db.SaveChanges();
 
-                // حفظ الوصفة
                 var existing = _db.ProductRecipes
                     .Where(pr => pr.ProductId == product.Id)
                     .ToList();
+
                 _db.ProductRecipes.RemoveRange(existing);
 
                 foreach (var row in _recipeRows.Where(r => r.RawMaterialId != 0 && r.QuantiteNecessaire > 0))
@@ -532,7 +586,6 @@ namespace ProManSystem.Views
             }
         }
 
-      
         private void CancelEditButton_Click(object sender, RoutedEventArgs e)
         {
             ClearEditorPanel();

@@ -89,14 +89,12 @@
 
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
-           
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="10"/>
-         
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-    
+        <!-- قسم قائمة المنتجات -->
         <Border Grid.Column="0"
                 Background="White"
                 CornerRadius="8"
@@ -115,7 +113,6 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                
                 <TextBlock Grid.Row="0"
                            Text="📦 قائمة المنتجات"
                            FontSize="20"
@@ -124,7 +121,6 @@
                            Margin="0,0,0,12"
                            HorizontalAlignment="Right"/>
 
-             
                 <StackPanel Grid.Row="1" Margin="0,0,0,12">
                     <TextBox x:Name="SearchTextBox"
                              Height="36"
@@ -161,7 +157,6 @@
                     </StackPanel>
                 </StackPanel>
 
-               
                 <DataGrid x:Name="ProductsGrid"
                           Grid.Row="2"
                           AutoGenerateColumns="False"
@@ -245,14 +240,13 @@
             </Grid>
         </Border>
 
-       
         <GridSplitter Grid.Column="1"
                       Width="10"
                       HorizontalAlignment="Stretch"
                       Background="Transparent"
                       ShowsPreview="False"/>
 
-     
+      
         <Border Grid.Column="2"
                 Background="White"
                 CornerRadius="8"
@@ -274,7 +268,6 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                  
                     <TextBlock Grid.Row="0"
                                x:Name="EditorTitleTextBlock"
                                Text="✏️ تحرير المنتج"
@@ -284,6 +277,7 @@
                                Margin="0,0,0,15"
                                HorizontalAlignment="Right"/>
 
+                   
                     <Border Grid.Row="1"
                             Background="#F9F9F9"
                             CornerRadius="6"
@@ -295,8 +289,6 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="130"/>
@@ -305,7 +297,7 @@
 
                           
                             <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Text="كود المنتج (تلقائي)"
+                                       Text="كود المنتج"
                                        FontSize="11"
                                        Foreground="#757575"
                                        VerticalAlignment="Center"
@@ -316,48 +308,28 @@
                                      Margin="0,0,0,8"
                                      Padding="8,0"
                                      FontSize="12"
-                                     Background="#E2E8F0"
+                                     Background="#F7FAFC"
                                      BorderBrush="#CBD5E0"
-                                     IsReadOnly="True"/>
+                                     IsReadOnly="False"/>
 
-                           
+                            
                             <TextBlock Grid.Row="1" Grid.Column="0"
                                        Text="اسم المنتج"
                                        FontSize="11"
                                        Foreground="#757575"
                                        VerticalAlignment="Center"
-                                       Margin="0,0,10,8"/>
+                                       Margin="0,0,10,0"/>
                             <TextBox x:Name="NameTextBox"
                                      Grid.Row="1" Grid.Column="1"
                                      Height="32"
-                                     Margin="0,0,0,8"
                                      Padding="8,0"
                                      FontSize="12"
                                      Background="#F7FAFC"
                                      BorderBrush="#CBD5E0"/>
-
-                           
-                            <TextBlock Grid.Row="2" Grid.Column="0"
-                                       Text="الوصف"
-                                       FontSize="11"
-                                       Foreground="#757575"
-                                       VerticalAlignment="Top"
-                                       Margin="0,8,10,0"/>
-                            <TextBox x:Name="DescriptionTextBox"
-                                     Grid.Row="2" Grid.Column="1"
-                                     Height="60"
-                                     Margin="0,0,0,8"
-                                     Padding="8"
-                                     FontSize="12"
-                                     TextWrapping="Wrap"
-                                     AcceptsReturn="True"
-                                     Background="#F7FAFC"
-                                     BorderBrush="#CBD5E0"
-                                     VerticalScrollBarVisibility="Auto"/>
                         </Grid>
                     </Border>
 
-                   
+                  
                     <Border Grid.Row="2"
                             Background="#FFFEF7"
                             CornerRadius="6"
@@ -398,17 +370,24 @@
                                 </DataGrid.ColumnHeaderStyle>
 
                                 <DataGrid.Columns>
-                              
+                                    
                                     <DataGridComboBoxColumn Header="المادة الأولية"
                                                             Width="*"
                                                             SelectedValueBinding="{Binding RawMaterialId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                             DisplayMemberPath="Designation"
                                                             SelectedValuePath="Id"/>
 
-                                 
+                                   
                                     <DataGridTextColumn Header="الكمية"
-                                                        Binding="{Binding QuantiteNecessaire, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}"
-                                                        Width="100"/>
+                                                        Binding="{Binding QuantiteNecessaire, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=N3}"
+                                                        Width="100">
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="TextBox">
+                                                <EventSetter Event="PreviewTextInput" Handler="QuantityTextBox_PreviewTextInput"/>
+                                                <EventSetter Event="LostFocus" Handler="QuantityTextBox_LostFocus"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                    </DataGridTextColumn>
 
                                     
                                     <DataGridTemplateColumn Header="حذف" Width="60">
@@ -439,7 +418,7 @@
                         </StackPanel>
                     </Border>
 
-                  
+                   
                     <Border Grid.Row="3"
                             Background="#F0F4F8"
                             CornerRadius="6"
@@ -453,6 +432,32 @@
                                        FontWeight="Bold"
                                        Foreground="#1976D2"
                                        Margin="0,0,0,10"/>
+
+                           
+                            <TextBox x:Name="RawMaterialSearchTextBox"
+                                     Height="30"
+                                     Padding="8,0"
+                                     FontSize="11"
+                                     Margin="0,0,0,8"
+                                     TextChanged="RawMaterialSearch_TextChanged"
+                                     Background="#F7FAFC"
+                                     BorderBrush="#90CAF9"
+                                     BorderThickness="1">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Text" Value="🔍 ابحث عن مادة أولية..."/>
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Setter Property="Foreground" Value="Black"/>
+                                            </Trigger>
+                                            <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource Self}}" Value="">
+                                                <Setter Property="Text" Value="🔍 ابحث عن مادة أولية..."/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
 
                             <DataGrid x:Name="AvailableRawMaterialsGrid"
                                       Height="150"
@@ -480,7 +485,7 @@
 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="كود المادة"
-                                                        Binding="{Binding Code}"
+                                                        Binding="{Binding CodeMatiere}"
                                                         Width="100"/>
 
                                     <DataGridTextColumn Header="اسم المادة"
@@ -499,7 +504,7 @@
                         </StackPanel>
                     </Border>
 
-               
+                    
                     <Border Grid.Row="4"
                             Background="#E8F5E9"
                             CornerRadius="6"
@@ -522,7 +527,6 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                           
                             <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
                                        Text="💰 التكلفة والتسعير"
                                        FontSize="14"
@@ -530,7 +534,6 @@
                                        Foreground="#2E7D32"
                                        Margin="0,0,0,12"/>
 
-                         
                             <TextBlock Grid.Row="1" Grid.Column="0"
                                        Text="تكلفة إنتاج الوحدة:"
                                        FontSize="12"
@@ -547,7 +550,6 @@
                                        VerticalAlignment="Center"
                                        Margin="0,0,0,8"/>
 
-                          
                             <TextBlock Grid.Row="2" Grid.Column="0"
                                        Text="الحد الأقصى للإنتاج:"
                                        FontSize="12"
@@ -564,7 +566,6 @@
                                        VerticalAlignment="Center"
                                        Margin="0,0,0,8"/>
 
-                           
                             <TextBlock Grid.Row="3" Grid.ColumnSpan="2"
                                        Text="اختر طريقة حساب هامش الربح:"
                                        FontSize="12"
@@ -572,7 +573,6 @@
                                        Foreground="#555555"
                                        Margin="0,8,0,8"/>
 
-                           
                             <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,8">
                                 <RadioButton x:Name="MarginPercentageRadio"
                                              Content="نسبة %"
@@ -592,7 +592,6 @@
                                 <TextBlock Text="%" FontSize="12" VerticalAlignment="Center" Margin="5,0"/>
                             </StackPanel>
 
-                            
                             <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,8">
                                 <RadioButton x:Name="MarginFixedRadio"
                                              Content="قيمة ثابتة"
@@ -632,7 +631,7 @@
                         </Grid>
                     </Border>
 
-                    
+                   
                     <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
                         <Button x:Name="SaveProductButton"
                                 Content="💾 حفظ المنتج"

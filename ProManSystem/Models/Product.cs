@@ -16,12 +16,10 @@ namespace ProManSystem.Models
         [MaxLength(200)]
         public string Nom { get; set; } = string.Empty;
 
-        [MaxLength(500)]
-        public string? Description { get; set; }
-
         public decimal PrixVente { get; set; }
 
         public decimal StockActuel { get; set; }
+
         public decimal StockMin { get; set; }
 
         public decimal CoutProduction { get; set; }
@@ -30,7 +28,6 @@ namespace ProManSystem.Models
 
         public DateTime DateCreation { get; set; }
 
-       
         public ICollection<ProductRecipe> ProductRecipes { get; set; } = new List<ProductRecipe>();
     }
 }
